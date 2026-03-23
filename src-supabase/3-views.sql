@@ -83,7 +83,7 @@ COMMENT ON COLUMN public.role_for_usermgm.project_id IS 'Same as role.project_id
 COMMENT ON COLUMN public.role_for_usermgm.user_id IS 'Same as role.user_id.';
 COMMENT ON COLUMN public.role_for_usermgm.activist_application IS 'Same as role.activist_application.';
 COMMENT ON COLUMN public.role_for_usermgm.activist IS 'Same as role.activist.';
-COMMENT ON COLUMN public.role_for_usermgm.manager_application IS 'Same as role.manager.';
+COMMENT ON COLUMN public.role_for_usermgm.manager_application IS 'Same as role.manager_application.';
 COMMENT ON COLUMN public.role_for_usermgm.manager IS 'Same as role.manager.';
 
 

@@ -70,7 +70,7 @@ CREATE POLICY select_for_all ON public.response FOR SELECT
 
 DROP POLICY IF EXISTS insert_for_own_project ON public.response;
 CREATE POLICY insert_for_own_project ON public.response FOR INSERT TO authenticated 
-    WITH CHECK (public.can_implement(public.project_for_response(id)));
+    WITH CHECK (public.can_implement((SELECT project_id FROM public.step WHERE id = step_id)));
 
 
 ALTER TABLE public.role ENABLE ROW LEVEL SECURITY;
@@ -94,13 +94,13 @@ CREATE POLICY insert_for_own_project ON public.step FOR INSERT TO authenticated
 -- Row-Level Security (RLS) policies for Supabase defined tables
 --
 
-ALTER TABLE storage.buckets ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE storage.buckets ENABLE ROW LEVEL SECURITY;
 
 
-ALTER TABLE storage.migrations ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE storage.migrations ENABLE ROW LEVEL SECURITY;
 
 
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "insert_for_auth 12m4lle_0" ON storage.objects;
 CREATE POLICY "insert_for_auth 12m4lle_0" ON storage.objects FOR INSERT TO authenticated 
