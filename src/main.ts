@@ -8,7 +8,7 @@ import App from './App.vue';
 
 import router from './router';
 
-import 'views';
+import './views';
 
 import VueSplide from '@splidejs/vue-splide';
 

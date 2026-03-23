@@ -27,9 +27,9 @@ BEGIN
     RETURN(result);
 END;$$;
 
-ALTER FUNCTION public.can_implement(my_project_id bigint) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.can_implement(my_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
-GRANT  ALL ON FUNCTION public.can_implement(my_project_id bigint) 
+ALTER FUNCTION public.can_implement(a_project_id bigint) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.can_implement(a_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
+GRANT  ALL ON FUNCTION public.can_implement(a_project_id bigint) 
     TO anon, authenticated, service_role;
 
 /* To recreate dropped dependent objects:
@@ -81,9 +81,9 @@ BEGIN
     RETURN(result);
 END;$$;
 
-ALTER FUNCTION public.can_pay(my_project_id bigint) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.can_pay(my_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
-GRANT  ALL ON FUNCTION public.can_pay(my_project_id bigint)
+ALTER FUNCTION public.can_pay(a_project_id bigint) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.can_pay(a_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
+GRANT  ALL ON FUNCTION public.can_pay(a_project_id bigint)
     TO anon, authenticated, service_role;
 
 COMMENT ON FUNCTION public.can_pay(a_project_id bigint) IS E''
@@ -125,9 +125,9 @@ BEGIN
     RETURN(result);
 END;$$;
 
-ALTER FUNCTION public.can_validate(my_project_id bigint) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.can_validate(my_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
-GRANT  ALL ON FUNCTION public.can_validate(my_project_id bigint)
+ALTER FUNCTION public.can_validate(a_project_id bigint) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.can_validate(a_project_id bigint) FROM PUBLIC, anon, authenticated, service_role;
+GRANT  ALL ON FUNCTION public.can_validate(a_project_id bigint)
     TO anon, authenticated, service_role;
 
 COMMENT ON FUNCTION public.can_validate(a_project_id bigint) IS E''
@@ -186,14 +186,14 @@ DROP FUNCTION IF EXISTS public.project_for_response(bigint) CASCADE;
 CREATE OR REPLACE FUNCTION public.project_for_response(a_response_id bigint) RETURNS bigint
     LANGUAGE plpgsql AS $$
 BEGIN
-    SELECT step.project_id
+    RETURN (SELECT step.project_id
         FROM response JOIN step ON step.id = response.step_id
-        WHERE response.id = a_response_id;
+        WHERE response.id = a_response_id);
 END;$$;
 
-ALTER FUNCTION public.project_for_response(my_response_id bigint) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.project_for_response(my_response_id bigint) FROM PUBLIC, anon, authenticated, service_role;
-GRANT  ALL ON FUNCTION public.project_for_response(my_response_id bigint)
+ALTER FUNCTION public.project_for_response(a_response_id bigint) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.project_for_response(a_response_id bigint) FROM PUBLIC, anon, authenticated, service_role;
+GRANT  ALL ON FUNCTION public.project_for_response(a_response_id bigint)
     TO anon, authenticated, service_role;
 
 COMMENT ON FUNCTION public.project_for_response(a_response_id bigint) IS 
@@ -204,7 +204,7 @@ COMMENT ON FUNCTION public.project_for_response(a_response_id bigint) IS
 /* To recreate dropped dependent objects:
 
 CREATE POLICY insert_for_own_project ON public.response FOR INSERT TO authenticated 
-    WITH CHECK (public.can_implement(public.project_for_response(id)));
+    WITH CHECK (public.can_implement((SELECT project_id FROM public.step WHERE id = step_id)));
 */
 
 

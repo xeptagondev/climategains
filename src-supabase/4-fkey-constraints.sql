@@ -20,6 +20,16 @@ ALTER TABLE ONLY public.benefit
         FOREIGN KEY (evidence) REFERENCES public.medium(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY public.backing
+    DROP CONSTRAINT IF EXISTS backing_backer_fkey,
+    ADD CONSTRAINT backing_backer_fkey FOREIGN KEY (backer) 
+        REFERENCES public.profile(id) ON DELETE RESTRICT;
+
+ALTER TABLE ONLY public.backing 
+    DROP CONSTRAINT IF EXISTS backing_project_id_fkey,
+    ADD CONSTRAINT backing_project_id_fkey FOREIGN KEY (project_id) 
+        REFERENCES public.project(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY public.backing
     DROP CONSTRAINT IF EXISTS backing_support_type_fkey,
     ADD CONSTRAINT backing_support_type_fkey 
         FOREIGN KEY (support_type) REFERENCES public.tag(id) ON DELETE SET NULL;
@@ -60,7 +70,7 @@ ALTER TABLE ONLY public.medium
 ALTER TABLE ONLY public.medium
     DROP CONSTRAINT IF EXISTS medium_programme_step_id_fkey,
     ADD CONSTRAINT medium_programme_step_id_fkey 
-        FOREIGN KEY (programme_step_id) REFERENCES public.step(id);
+        FOREIGN KEY (programme_step_id) REFERENCES public.programme_step(id);
 
 ALTER TABLE ONLY public.medium
     DROP CONSTRAINT IF EXISTS medium_project_id_fkey,
