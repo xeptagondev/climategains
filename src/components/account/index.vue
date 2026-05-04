@@ -8,9 +8,11 @@ import useStore from '@/store';
 import { IonModal } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 
-import { supabase } from '@/helpers/api';
+import { supabase, showError } from '@/helpers/api';
 
 import createAccount from './create.vue';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const router = useRouter();
 const store = useStore();
@@ -40,19 +42,34 @@ function goTo(value) {
 	splide.value.go(value);
 }
 
+const isLoggingIn = ref(false);
+
 async function login() {
+	const email = state.email.trim();
+	const password = state.password;
+	if (!email || !password) {
+		await showError('Please enter both email and password');
+		return;
+	}
+	if (!EMAIL_RE.test(email)) {
+		await showError('Please enter a valid email address');
+		return;
+	}
+	isLoggingIn.value = true;
 	try {
 		const { data, error } = await supabase.auth.signInWithPassword({
-			email: state.email,
-			password: state.password
+			email,
+			password
 		});
 		if (error) throw error;
-		store.fetchUsers();
+		await store.fetchUsers();
 		store.user.account = data.user;
 		store.user.session = data.session;
 		store.isAuthenticated = true;
-	} catch (error) {
-		window.alert(error.error_description || error.message);
+	} catch (error: any) {
+		await showError(error.error_description || error.message);
+	} finally {
+		isLoggingIn.value = false;
 	}
 }
 
@@ -118,13 +135,15 @@ watch(
 					Go Back
 				</div>
 				<div class="flex flex-col" v-show="accountState === 'login'">
-					<input class="" placeholder="Your Email" v-model="state.email" />
-					<input placeholder="Your Password" v-model="state.password" type="password" />
-					<div
-						class="bg-blue-500 text-center py-3 text-center flex items-center justify-center w-full rounded-full font-bold mt-3"
+					<input class="" placeholder="Your Email" v-model="state.email" type="email" autocomplete="email" />
+					<input placeholder="Your Password" v-model="state.password" type="password" autocomplete="current-password" />
+					<button
+						type="button"
+						:disabled="isLoggingIn"
+						class="bg-blue-500 text-center py-3 text-center flex items-center justify-center w-full rounded-full font-bold mt-3 disabled:opacity-60"
 						@click="login()">
-						Login
-					</div>
+						{{ isLoggingIn ? 'Signing in…' : 'Login' }}
+					</button>
 				</div>
 			</SplideSlide>
 		</Splide>

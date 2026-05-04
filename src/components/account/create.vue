@@ -10,8 +10,12 @@ import { Splide, SplideSlide } from '@splidejs/vue-splide';
 const splide = ref();
 const error = ref();
 const router = useRouter();
+const isSubmitting = ref(false);
 
-async function presentAlert(values) {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+async function presentAlert(values: string) {
 	const alert = await alertController.create({
 		header: 'We are missing some information',
 		message: values,
@@ -34,18 +38,47 @@ const state = reactive({
 
 state.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+function validate(): string | null {
+	const firstname = state.firstname.trim();
+	const lastname = state.lastname.trim();
+	const email = state.email.trim();
+
+	if (!firstname || !lastname || !email || !state.password) {
+		return 'Please complete all required fields to sign up';
+	}
+	if (!EMAIL_RE.test(email)) {
+		return 'Please enter a valid email address';
+	}
+	if (!PASSWORD_RE.test(state.password)) {
+		return 'Password must be at least 8 characters and contain uppercase, lowercase, and a number';
+	}
+	return null;
+}
+
 async function submit() {
-	const user = JSON.parse(JSON.stringify(state));
-	if (!user.email || !user.firstname || !user.lastname) {
-		presentAlert('Please complete all required fields to sign up');
-	} else {
-		var response = await apiSignUp(user);
+	const validationError = validate();
+	if (validationError) {
+		await presentAlert(validationError);
+		return;
 	}
 
-	if (response.user) {
-		splide.value.go(1);
-	} else {
-		presentAlert(response);
+	isSubmitting.value = true;
+	try {
+		const user = JSON.parse(JSON.stringify(state));
+		user.firstname = user.firstname.trim();
+		user.lastname = user.lastname.trim();
+		user.email = user.email.trim();
+
+		const response = await apiSignUp(user);
+
+		if (response && response.user) {
+			splide.value.go(1);
+		} else {
+			const message = response?.error?.message || 'Sign up failed. Please try again.';
+			await presentAlert(message);
+		}
+	} finally {
+		isSubmitting.value = false;
 	}
 }
 </script>
@@ -57,19 +90,31 @@ async function submit() {
 		<Splide ref="splide" class="w-full" :options="{ autoHeight: true, arrows: false, pagination: false, drag: false }">
 			<SplideSlide class="slide w-full">
 				<div class="flex flex-col">
-					<input placeholder="Your First Name" v-model="state.firstname" />
-					<input placeholder="Your Last Name" v-model="state.lastname" />
+					<input placeholder="Your First Name" v-model="state.firstname" autocomplete="given-name" />
+					<input placeholder="Your Last Name" v-model="state.lastname" autocomplete="family-name" />
 
-					<input placeholder="Your Email" v-model="state.email" />
+					<input placeholder="Your Email" v-model="state.email" type="email" autocomplete="email" />
 					<div class="w-full text-left">
-						<input class="w-full" id="password" v-model="state.password" placeholder="Your Password" type="password" />
+						<input
+							class="w-full"
+							id="password"
+							v-model="state.password"
+							placeholder="Your Password"
+							type="password"
+							autocomplete="new-password" />
 						<label for="password" class="text-xs text-left text-white/60">
-							Your password must be alphanumeric and contain uppercase and lowercase letters.
+							Your password must be at least 8 characters and contain uppercase, lowercase, and a number.
 						</label>
 					</div>
 					<input v-model="state.organization" placeholder="Your Organization / Company" />
 
-					<div @click="submit()" class="bg-blue-500 p-3 mx-10 text-center rounded-full font-bold mt-3">Sign Up</div>
+					<button
+						type="button"
+						:disabled="isSubmitting"
+						@click="submit()"
+						class="bg-blue-500 p-3 mx-10 text-center rounded-full font-bold mt-3 disabled:opacity-60">
+						{{ isSubmitting ? 'Signing up…' : 'Sign Up' }}
+					</button>
 				</div>
 			</SplideSlide>
 			<SplideSlide class="slide w-full"
@@ -92,5 +137,8 @@ input {
 .account_create {
 	font-family: Helvetica, sans-serif;
 	@apply mb-10;
+}
+button:disabled {
+	cursor: not-allowed;
 }
 </style>
