@@ -49,7 +49,7 @@ function signup() {
 		</template>
 		<template #default-view-body>
 			<div class="content_container mt-10" v-if="programme">
-				<div class="header_details" :style="{ backgroundImage: `url(${store.getPoster(programme.id).url})` }">
+				<div class="header_details" :style="{ backgroundImage: `url(${store.getPoster(programme.id)?.url ?? ''})` }">
 					<h3 class="mx-4">{{ programme.name }}</h3>
 				</div>
 
@@ -142,9 +142,9 @@ function signup() {
 							Video Description
 						</h3>
 					</div>
-					<div class="w-full flex flex-col relative flex items-center justify-center">
-						<video class="h-auto w-full" controls :src="store.getVideo(programme.id).url" />
-						<p class="italic w-full my-0 bg-white/20 py-3 text-center">{{ store.getVideo(programme.id).caption }}</p>
+					<div class="w-full flex flex-col relative flex items-center justify-center" v-if="store.getVideo(programme.id)">
+						<video class="h-auto w-full" controls :src="store.getVideo(programme.id)?.url" />
+						<p class="italic w-full my-0 bg-white/20 py-3 text-center">{{ store.getVideo(programme.id)?.caption }}</p>
 					</div>
 					<div class="w-full flex items-center mt-0">
 						<h3

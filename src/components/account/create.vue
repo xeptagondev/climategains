@@ -15,9 +15,9 @@ const isSubmitting = ref(false);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-async function presentAlert(values: string) {
+async function presentAlert(values: string, header = 'We are missing some information') {
 	const alert = await alertController.create({
-		header: 'We are missing some information',
+		header,
 		message: values,
 		buttons: ['OK']
 	});
@@ -39,17 +39,23 @@ const state = reactive({
 state.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function validate(): string | null {
-	const firstname = state.firstname.trim();
-	const lastname = state.lastname.trim();
-	const email = state.email.trim();
+	const firstname = (state.firstname ?? '').trim();
+	const lastname = (state.lastname ?? '').trim();
+	const email = (state.email ?? '').trim();
+	const password = state.password ?? '';
 
-	if (!firstname || !lastname || !email || !state.password) {
-		return 'Please complete all required fields to sign up';
+	const missing: string[] = [];
+	if (!firstname) missing.push('First Name');
+	if (!lastname) missing.push('Last Name');
+	if (!email) missing.push('Email');
+	if (!password) missing.push('Password');
+	if (missing.length > 0) {
+		return `Please fill in: ${missing.join(', ')}`;
 	}
 	if (!EMAIL_RE.test(email)) {
 		return 'Please enter a valid email address';
 	}
-	if (!PASSWORD_RE.test(state.password)) {
+	if (!PASSWORD_RE.test(password)) {
 		return 'Password must be at least 8 characters and contain uppercase, lowercase, and a number';
 	}
 	return null;
@@ -69,13 +75,34 @@ async function submit() {
 		user.lastname = user.lastname.trim();
 		user.email = user.email.trim();
 
-		const response = await apiSignUp(user);
+		const result = await apiSignUp(user);
+		console.log('[signup v2] submit result:', JSON.stringify(result));
 
-		if (response && response.user) {
-			splide.value.go(1);
-		} else {
-			const message = response?.error?.message || 'Sign up failed. Please try again.';
-			await presentAlert(message);
+		switch (result?.status) {
+			case 'created':
+			case 'pending_confirmation':
+				// New user OR existing-unconfirmed (Supabase auto-resent email).
+				// Either way the user just needs to check their inbox.
+				splide.value.go(1);
+				break;
+			case 'already_exists':
+				await presentAlert(
+					'An account with this email already exists. Please log in instead.',
+					'Account already exists'
+				);
+				break;
+			case 'error': {
+				const err = result.error;
+				const message = err?.message || JSON.stringify(err);
+				const status = err?.status ? ` (status ${err.status})` : '';
+				await presentAlert(`${message}${status}`, 'Sign up failed');
+				break;
+			}
+			default:
+				await presentAlert(
+					`Unexpected result: ${JSON.stringify(result)}`,
+					'Sign up failed'
+				);
 		}
 	} finally {
 		isSubmitting.value = false;

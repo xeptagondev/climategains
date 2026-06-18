@@ -95,10 +95,11 @@
 											<span class="font-bold">Next Question</span>
 										</div>
 										<div
-											@click="finish(index)"
+											@click="!submitting && finish(index)"
 											v-if="!recording && video && index + 1 == questions.length"
-											class="start w-full flex flex-col justify-center items-center">
-											<span class="font-bold">Send Video for Approval</span>
+											:class="['start w-full flex justify-center items-center', submitting ? 'opacity-60 pointer-events-none' : '']">
+											<ion-spinner v-if="submitting" name="crescent" class="mr-2" style="width:18px;height:18px"></ion-spinner>
+											<span class="font-bold">{{ submitting ? 'Submitting…' : 'Send Video for Approval' }}</span>
 										</div>
 										<div
 											class="flex w-full items-center font-bold justify-center"
@@ -135,13 +136,15 @@ import {
 	onIonViewDidEnter,
 	onIonViewWillLeave,
 	IonButton,
-	IonIcon
+	IonIcon,
+	IonSpinner
 } from '@ionic/vue';
 import { closeOutline, cameraReverseOutline } from 'ionicons/icons';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import { Geolocation } from '@capacitor/geolocation';
 
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { toastController } from '@ionic/vue';
 
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -150,9 +153,11 @@ import '@splidejs/vue-splide/css';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 
 import useStore from '@/store/';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 
 import { supabase } from '@/helpers/api';
+
+const AppPermissions = registerPlugin('AppPermissions');
 
 const VIDEO_DIR = 'stored-videos';
 
@@ -181,6 +186,7 @@ const timer = ref(0);
 const splide = ref();
 const videoPlayer = ref();
 const responses = ref([]);
+const submitting = ref(false);
 function getUrl(value) {
 	return Capacitor.convertFileSrc(value);
 }
@@ -219,7 +225,41 @@ async function saveVideo(path) {
 	videoFile.value = savedFile;
 }
 
+async function showToast(message) {
+	const t = await toastController.create({
+		message,
+		duration: 3500,
+		color: 'danger',
+		position: 'top'
+	});
+	await t.present();
+}
+
+async function ensureMicPermission() {
+	if (!Capacitor.isNativePlatform()) return true;
+	try {
+		const status = await AppPermissions.requestMicrophone();
+		if (status?.microphone === 'granted') return true;
+		await showToast(
+			'Microphone access is required to record. Enable it in Settings → Apps → cross-vue → Permissions.'
+		);
+		return false;
+	} catch (err) {
+		console.log('[record] mic permission error:', err);
+		await showToast(`Permission error: ${err?.message || err}`);
+		return false;
+	}
+}
+
 async function recordVideo() {
+	// Toggling state. If we're about to START, request permission first.
+	const aboutToStart = !recording.value;
+
+	if (aboutToStart) {
+		const ok = await ensureMicPermission();
+		if (!ok) return;
+	}
+
 	recording.value = !recording.value;
 
 	let interval = setInterval(() => {
@@ -231,11 +271,19 @@ async function recordVideo() {
 			video.value = false;
 		}
 	}, 1000);
-	if (!recording.value) {
-		const videoData = await CameraPreview.stopRecordVideo();
-		await saveVideo(videoData.videoFilePath);
-	} else {
-		CameraPreview.startRecordVideo(cameraOptions);
+
+	try {
+		if (!recording.value) {
+			const videoData = await CameraPreview.stopRecordVideo();
+			await saveVideo(videoData.videoFilePath);
+		} else {
+			await CameraPreview.startRecordVideo(cameraOptions);
+		}
+	} catch (err) {
+		console.log('[record] recordVideo error:', err);
+		recording.value = false;
+		clearInterval(interval);
+		await showToast(`Could not record: ${err?.message || err}`);
 	}
 }
 
@@ -259,8 +307,15 @@ function nextQ(index) {
 }
 
 async function openCamera() {
-	cameraActive.value = true;
-	await CameraPreview.start(cameraOptions);
+	try {
+		await ensureMicPermission();
+		cameraActive.value = true;
+		await CameraPreview.start(cameraOptions);
+	} catch (err) {
+		console.log('[record] openCamera error:', err);
+		cameraActive.value = false;
+		await showToast(`Could not open camera: ${err?.message || err}`);
+	}
 }
 
 async function recordAgain() {
@@ -295,8 +350,8 @@ async function createResponse(item, position, stepId) {
 				programme_response_id: item.programme_response_id,
 				step_id: stepId,
 				url: item.url,
-				geo_lat: position.coords.latitude || '',
-				geo_long: position.coords.longitude || ''
+				geo_lat: position.coords.latitude ?? null,
+				geo_long: position.coords.longitude ?? null
 			}
 		])
 		.select();
@@ -323,10 +378,33 @@ function profile() {
 	} else return false;
 }
 
+async function getPositionSafe() {
+	try {
+		return await Geolocation.getCurrentPosition({
+			timeout: 20000,
+			maximumAge: 60000,
+			enableHighAccuracy: false
+		});
+	} catch (err) {
+		console.log('[record] geolocation failed:', err);
+		await showToast(
+			'Could not get your location. Submitting without GPS coordinates.'
+		);
+		return { coords: { latitude: null, longitude: null } };
+	}
+}
+
 async function createProject() {
 	const projectId = `${store.user.account.id}-${Date.now()}`;
-	const position = await Geolocation.getCurrentPosition();
-	const place = await fetchPlace(position.coords);
+	const position = await getPositionSafe();
+	let place = '';
+	if (position.coords.latitude != null && position.coords.longitude != null) {
+		try {
+			place = await fetchPlace(position.coords);
+		} catch (err) {
+			console.log('[record] place lookup failed:', err);
+		}
+	}
 	const projectName = action.name.split(' ')[0] + '-' + profile().fullname.toLowerCase().replace(' ', '-');
 	const { data, error } = await supabase
 		.from('project')
@@ -334,8 +412,8 @@ async function createProject() {
 			{
 				programme_id: action.id,
 				name: projectName,
-				geo_lat: position.coords.latitude,
-				geo_long: position.coords.longitude,
+				geo_lat: position.coords.latitude ?? null,
+				geo_long: position.coords.longitude ?? null,
 				location_name: place
 			}
 		])
@@ -360,12 +438,21 @@ async function createProject() {
 // const result = await CameraPreview.capture(cameraOptions);
 // const base64PictureData = result.value;
 async function finish(index) {
-	const resp = {
-		programme_response_id: questions[index].id,
-		url: dummyVideos[index]
-	};
-	responses.value.push(resp);
-	await createProject();
+	if (submitting.value) return;
+	submitting.value = true;
+	try {
+		const resp = {
+			programme_response_id: questions[index].id,
+			url: dummyVideos[index]
+		};
+		responses.value.push(resp);
+		await createProject();
+	} catch (err) {
+		console.log('[record] finish error:', err);
+		await showToast(`Submission failed: ${err?.message || err}`);
+		submitting.value = false;
+	}
+	// On success createProject navigates away, so no need to reset submitting.
 }
 
 onIonViewWillEnter(() => {

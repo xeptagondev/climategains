@@ -1,8 +1,7 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "cross-vue",
+  "appName": "Climate Gains",
   "webDir": "dist",
-  "bundledWebRuntime": false,
   "android": {
     "path": "./src-capacitor/android"
   },
@@ -10,7 +9,7 @@
     "path": "./src-capacitor/ios"
   },
   "server": {
-    "url": "http://192.168.0.106:5161",
+    "url": "http://192.168.0.33:5161",
     "clearText": true
   }
 }

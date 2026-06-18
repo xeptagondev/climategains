@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { IonCardHeader, IonCardSubtitle } from '@ionic/vue';
 
 import { useRouter } from 'vue-router';
+import useStore from '@/store';
 
 const router = useRouter();
+const store = useStore();
 
 const date = new Date().toLocaleDateString('en-uk', {
 	weekday: 'long',
@@ -25,7 +25,13 @@ const date = new Date().toLocaleDateString('en-uk', {
 				<img class="w-full top-60 absolute h-full" src="../assets/3.jpg" />
 				<div class="w-full mt-4 flex items-center justify-between" @click="() => router.push('../account')">
 					<img class="ml-4" style="height: 31px" src="../assets/logo_white_alt.png" />
-					<div class="flex text-lg font-bold items-center mr-6">
+					<div v-if="store.isAuthenticated" class="flex items-center mr-6" aria-label="Account">
+						<div
+							class="w-9 h-9 rounded-full bg-white/15 border border-white/40 flex items-center justify-center text-white font-bold text-base">
+							{{ (store.user?.account?.user_metadata?.fullname || store.user?.account?.email || '?').charAt(0).toUpperCase() }}
+						</div>
+					</div>
+					<div v-else class="flex text-lg font-bold items-center mr-6">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2">
 							<path
 								fill-rule="evenodd"

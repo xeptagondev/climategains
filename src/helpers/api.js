@@ -4,6 +4,10 @@ import { toastController } from '@ionic/vue';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+console.log('[supabase] URL:', supabaseUrl);
+console.log('[supabase] anon key length:', supabaseAnonKey?.length);
+console.log('[supabase] window.location.origin:', window.location.origin);
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function showError(message) {
@@ -33,13 +37,23 @@ async function apiSelect(table, filter, query) {
 	}
 }
 
+/**
+ * Sign up flow with clean status reporting.
+ * Returns one of:
+ *   { status: 'created', user }           — brand-new user, confirmation email sent
+ *   { status: 'pending_confirmation' }    — email is already registered but unconfirmed; Supabase auto-resent
+ *   { status: 'already_exists' }          — email is already registered and confirmed; user should log in
+ *   { status: 'error', error }            — real error to surface
+ */
 async function apiSignUp(payload) {
+	const redirect = `${window.location.origin}/account`;
+	console.log('[signup v2] email:', payload.email, 'redirect:', redirect);
 	try {
-		const { data: user, error } = await supabase.auth.signUp({
+		const { data, error } = await supabase.auth.signUp({
 			email: payload.email,
 			password: payload.password,
 			options: {
-				emailRedirectTo: `${window.location.origin}/account`,
+				emailRedirectTo: redirect,
 				data: {
 					fullname: payload.firstname + ' ' + payload.lastname,
 					organization: payload.organization,
@@ -47,14 +61,33 @@ async function apiSignUp(payload) {
 				}
 			}
 		});
+		console.log('[signup v2] data:', JSON.stringify(data));
+		console.log('[signup v2] error:', JSON.stringify(error));
+
 		if (error) {
-			await showError(error.message);
-			return { error };
+			return { status: 'error', error };
 		}
-		return user;
+		if (data?.user?.id) {
+			// Supabase populates identities=[] when the email already exists.
+			const identities = data.user.identities;
+			if (Array.isArray(identities) && identities.length === 0) {
+				return { status: 'already_exists' };
+			}
+			return { status: 'created', user: data.user };
+		}
+		// Anti-enumeration shape: { user: null, session: null, error: null }
+		// Supabase has already auto-resent the confirmation email if the account
+		// existed and was unconfirmed. Treat as pending confirmation.
+		if (data && data.user === null && data.session === null) {
+			return { status: 'pending_confirmation' };
+		}
+		return {
+			status: 'error',
+			error: { message: `Unexpected response: ${JSON.stringify(data)}` }
+		};
 	} catch (error) {
-		await showError(error.message);
-		return { error };
+		console.log('[signup v2] thrown:', error);
+		return { status: 'error', error };
 	}
 }
 
