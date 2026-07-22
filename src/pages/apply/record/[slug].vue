@@ -280,7 +280,11 @@ async function fetchPlace(coordinates) {
 
 	const place = await response.json();
 	console.log(place);
-	return place.features[4].place_name;
+	if (!place.features || place.features.length === 0) {
+		return '';
+	}
+	const index = Math.min(4, place.features.length - 1);
+	return place.features[index].place_name;
 }
 
 async function createResponse(item, position, stepId) {

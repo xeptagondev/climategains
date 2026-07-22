@@ -7,3 +7,7 @@ ul {
 	@apply p-0 m-0;
 }
 
+.pill-button {
+	@apply bg-black/50 border-none text-center py-2 flex items-center justify-center w-full rounded-full font-bold;
+}
+

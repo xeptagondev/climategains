@@ -19,7 +19,14 @@ export default defineComponent({
 <template>
 	<IonPage>
 		<IonContent>
-			<slot name="default-view-body"></slot>
+			<div class="tab-view-shell">
+				<div class="tab-view-bg">
+					<img class="tab-view-bg-img" src="../assets/3.jpg" />
+					<div class="tab-view-bg-overlay"></div>
+				</div>
+				<AppHeader />
+				<slot name="default-view-body"></slot>
+			</div>
 		</IonContent>
 		<IonToolbar>
 			<IonTabs>
@@ -41,7 +48,32 @@ export default defineComponent({
 						<IonIcon :icon="search"></IonIcon>
 					</IonTabButton>
 				</IonTabBar>
-			</IonTabs>
-		</IonToolbar>
-	</IonPage>
+				</IonTabs>
+			</IonToolbar>
+		</IonPage>
 </template>
+
+<style scoped>
+.tab-view-shell {
+	position: relative;
+	min-height: 100%;
+	display: flow-root;
+}
+.tab-view-bg {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	z-index: -1;
+}
+.tab-view-bg-img {
+	width: 100%;
+	height: 100%;
+	/* object-fit: cover; */
+}
+.tab-view-bg-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.3);
+}
+</style>

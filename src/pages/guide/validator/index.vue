@@ -18,7 +18,7 @@ const showModal = () => {
 };
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title>Climate Gains</template>
 		<template #default-view-body>
 			<div class="flex flex-col justify-center items-center">
