@@ -32,6 +32,7 @@
 	"homepage": "https://github.com/srav001/cross-web#readme",
 	"dependencies": {
 		"@capacitor-community/camera-preview": "^4.0.0",
+		"@mapbox/mapbox-gl-geocoder": "^5.0.1",
 		"@capacitor/android": "^4.3.0",
 		"@capacitor/app": "4.0.1",
 		"@capacitor/core": "4.3.0",

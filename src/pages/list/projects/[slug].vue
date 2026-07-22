@@ -46,7 +46,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title>
 			<!-- <div class="ml-1">{{ $route.params.slug }}</div> -->
 			<div class="ml-0">Climate Actions</div>
@@ -60,9 +60,10 @@ onMounted(async () => {
 						access-token="pk.eyJ1Ijoib3dlbmdvdCIsImEiOiJjbDcyNzE2aDcwMjBuNDBud3F1MGthdnh0In0.XFuCpgmPbk862HekmvKDlw"
 						map-style="mapbox://styles/mapbox/streets-v12
 "
+						:attribution-control="false"
 						:center="[project.geo_long, project.geo_lat]">
 						<MapboxMarker :lng-lat="[project.geo_long, project.geo_lat]">
-							<p class="bg-green-500 absolute w-3 h-3 rounded-full"></p
+							<p class="bg-green-500 w-3 h-3 rounded-full"></p
 						></MapboxMarker>
 					</MapboxMap>
 				</div>
