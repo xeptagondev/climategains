@@ -37,9 +37,12 @@ export default defineComponent({
 						<IonIcon :icon="personCircleSharp"></IonIcon>
 					</IonTabButton>
 
+					<!-- Search page not implemented yet — hidden until built out
 					<IonTabButton tab="search" href="/search">
 						<IonIcon :icon="search"></IonIcon>
 					</IonTabButton>
+					-->
+
 				</IonTabBar>
 			</IonTabs>
 		</IonToolbar>

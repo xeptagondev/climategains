@@ -49,7 +49,11 @@ function signup() {
 		</template>
 		<template #default-view-body>
 			<div class="content_container mt-10" v-if="programme">
-				<div class="header_details" :style="{ backgroundImage: `url(${store.getPoster(programme.id)?.url ?? ''})` }">
+				<div
+					class="header_details"
+					:style="store.getPoster(programme.id)?.url
+						? { backgroundImage: `url(${store.getPoster(programme.id).url})` }
+						: {}">
 					<h3 class="mx-4">{{ programme.name }}</h3>
 				</div>
 
@@ -239,6 +243,8 @@ ion-modal {
 
 .header_details {
 	height: 380px;
+	background-color: #0f3d2e;
+	background-image: linear-gradient(135deg, #134e4a 0%, #1e3a8a 100%);
 	background-repeat: no-repeat !important;
 	background-size: cover !important;
 	background-position: 50% 50px !important;

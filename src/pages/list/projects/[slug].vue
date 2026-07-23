@@ -41,6 +41,23 @@ function signup() {
 	}
 }
 
+function formatLocation(loc) {
+	if (!loc) return '';
+	let obj = loc;
+	if (typeof loc === 'string') {
+		try {
+			obj = JSON.parse(loc);
+		} catch {
+			// Not JSON — show the plain string as-is
+			return loc;
+		}
+	}
+	if (typeof obj !== 'object' || obj === null) return String(obj);
+	return Object.values(obj)
+		.filter(value => value !== null && value !== undefined && value !== '')
+		.join(', ');
+}
+
 onMounted(async () => {
 	project_steps.value = await getStepsFromProjectId(route.params.slug);
 });
@@ -108,7 +125,7 @@ onMounted(async () => {
 					</div>
 					<div class="list_item">
 						<span class="font-bold">Location</span>
-						<span class="flex items-center font-light">{{ project.location_name }} </span>
+						<span class="font-light text-right">{{ formatLocation(project.location_name) }} </span>
 					</div>
 					<div class="list_item">
 						<span class="font-bold">Funding provided by </span>
@@ -266,6 +283,7 @@ onMounted(async () => {
 }
 .header_details {
 	height: 380px;
+	margin-bottom: 1.25rem;
 	background-repeat: no-repeat !important;
 	background-size: cover !important;
 	background-position: 50% 50px !important;
@@ -322,6 +340,26 @@ div /deep/ .splide__arrow svg {
 .slide img {
 	height: 400px;
 	object-fit: cover;
+}
+
+/* Overlay the Mapbox attribution on top of the map, just inside the
+   bottom border, with legible styling so it doesn't overlap the title. */
+:deep(.mapboxgl-ctrl-bottom-left),
+:deep(.mapboxgl-ctrl-bottom-right) {
+	z-index: 2;
+	bottom: 8px;
+	right: 8px;
+	left: auto;
+}
+:deep(.mapboxgl-ctrl-attribution) {
+	background: rgba(0, 0, 0, 0.6) !important;
+	color: #fff !important;
+	font-size: 10px;
+	border-radius: 4px;
+	padding: 1px 6px;
+}
+:deep(.mapboxgl-ctrl-attribution a) {
+	color: #9ec5ff !important;
 }
 
 .step {

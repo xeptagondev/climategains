@@ -31,6 +31,23 @@ function getCountry(value) {
 	const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 	return regionNames.of(value);
 }
+
+function formatLocation(loc) {
+	if (!loc) return '';
+	let obj = loc;
+	if (typeof loc === 'string') {
+		try {
+			obj = JSON.parse(loc);
+		} catch {
+			// Not JSON — show the plain string as-is
+			return loc;
+		}
+	}
+	if (typeof obj !== 'object' || obj === null) return String(obj);
+	return Object.values(obj)
+		.filter(value => value !== null && value !== undefined && value !== '')
+		.join(', ');
+}
 </script>
 <template>
 	<tab-view>
@@ -56,7 +73,7 @@ function getCountry(value) {
 							<icon :type="getIcon(programme(item.programme_id).default_sector)" />
 							<div>
 								<b class="my-0">{{ item.name }}</b>
-								<p class="mt-1">{{ item.location_name }}</p>
+								<p class="mt-1">{{ formatLocation(item.location_name) }}</p>
 							</div>
 						</div>
 						<!-- <div class="rounded-lg ml-2 px-3 border border-white/30 text-white py-2 font-bold text-xs">

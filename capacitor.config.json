@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "com.app.climategains",
   "appName": "Climate Gains",
   "webDir": "dist",
   "android": {
@@ -7,9 +7,5 @@
   },
   "ios": {
     "path": "./src-capacitor/ios"
-  },
-  "server": {
-    "url": "http://192.168.0.33:5161",
-    "clearText": true
   }
 }
