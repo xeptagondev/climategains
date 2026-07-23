@@ -1,14 +1,20 @@
 <template>
-	<div class="icon" :class="props.type">
+	<div class="icon" :class="glyphName">
 		<component :is="svgIcon" />
 	</div>
 </template>
 
 <script setup>
 const props = defineProps(['type']);
-import { defineAsyncComponent } from 'vue';
-// simple usage
-const svgIcon = defineAsyncComponent(() => import(`./glyphs/${props.type}.vue`));
+import { computed, defineAsyncComponent } from 'vue';
+
+const KNOWN_GLYPHS = ['energy', 'gas', 'leaf', 'sun', 'tree'];
+const DEFAULT_GLYPH = 'leaf';
+
+// Falls back to a default glyph when `type` is missing or unrecognized (e.g. programme.default_sector
+// is not set), since a dynamic import for an unknown glyph name would otherwise throw.
+const glyphName = computed(() => (KNOWN_GLYPHS.includes(props.type) ? props.type : DEFAULT_GLYPH));
+const svgIcon = defineAsyncComponent(() => import(`./glyphs/${glyphName.value}.vue`));
 </script>
 
 <style scoped>

@@ -16,11 +16,15 @@ import PageView from './views/PageView.vue';
 
 import TabView from './views/TabView.vue';
 
+import AppHeader from './views/AppHeader.vue';
+
 const app = createApp(App).use(createPinia()).use(IonicVue).use(VueSplide).use(router);
 
 app.component('PageView', PageView);
 
 app.component('TabView', TabView);
+
+app.component('AppHeader', AppHeader);
 
 router.isReady().then(() => {
 	app.mount('#app');

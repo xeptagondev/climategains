@@ -6,7 +6,7 @@
 			<div class="text-center">Start</div>
 		</template>
 		<template #default-view-body>
-			<div class="mx-4 mt-20">
+			<div class="mx-4 mt-24">
 				<h1 class="mb-0 p-0">Search</h1>
 			</div>
 		</template>

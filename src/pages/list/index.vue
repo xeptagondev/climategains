@@ -54,12 +54,13 @@ function formatLocation(loc) {
 		<template #default-view-body>
 			<div v-if="store.role == 'validator'">
 				<div
-					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-5 top-5 py-2"
+					v-if="store.isAuthenticated"
+					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-10 bottom-10 py-2"
 					@click="changeRole('activist')">
 					Switch to Activist
 				</div>
 
-				<div class="mx-4 mt-20">
+				<div class="mx-4 mt-24">
 					<h1 class="mb-0 p-0">Climate Actions</h1>
 					<h3 class="mt-1 mb-4 font-light text-2xl">Projects Index</h3>
 				</div>
@@ -86,12 +87,13 @@ function formatLocation(loc) {
 
 			<div v-else>
 				<div
-					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-5 top-5 py-2"
+					v-if="store.isAuthenticated"
+					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-10 bottom-10 py-2"
 					@click="changeRole('validator')">
 					Switch to Validator
 				</div>
 
-				<div class="mx-4 mt-20">
+				<div class="mx-4 mt-24">
 					<h1 class="mb-0 p-0">Climate Opportunities</h1>
 					<h3 class="mt-1 mb-4 font-light text-2xl">Programmes Index</h3>
 				</div>

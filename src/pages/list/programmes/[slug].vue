@@ -42,7 +42,7 @@ function signup() {
 }
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title>
 			<!-- <div class="ml-1">{{ $route.params.slug }}</div> -->
 			<div class="ml-0">Climate Actions</div>
