@@ -18,7 +18,7 @@ const showModal = () => {
 };
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title> Validation </template>
 		<template #default-view-body>
 			<!-- <swiper

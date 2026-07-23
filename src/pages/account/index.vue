@@ -26,7 +26,7 @@ function logOut() {
 	<tab-view>
 		<template #default-view-body>
 			<div v-if="store.isAuthenticated">
-				<div class="mx-4 mt-14">
+				<div class="mx-4 mt-24">
 					<h1 class="mb-0 p-0 border-b pb-2 mb-3 border-white/20">My Account</h1>
 
 					<div class="bg-gray/20 p-3 rounded-lg">
@@ -37,7 +37,7 @@ function logOut() {
 						<p class="my-0"><b>Last Sign In</b>: {{ store.user.account.last_sign_in_at }}</p>
 					</div>
 
-					<div class="button bg-blue-600 text-center py-2 my-3 font-bold rounded-full" @click="logOut()">Logout</div>
+					<div class="pill-button my-3" @click="logOut()">Logout</div>
 				</div>
 				<ul class="items m-4">
 					<li class="flex items-center justify-between" @click="() => router.push(`../account/profile`)">
@@ -205,7 +205,7 @@ function logOut() {
 					</li>
 				</ul>
 			</div>
-			<div class="mx-4 mt-20">
+			<div v-else class="mx-4 mt-24">
 				<h1 class="text-3xl text-left mb-0">Welcome To Climate Gains</h1>
 				<p class="text-left text-xl">
 					In order to go further you'll need to create an account or login to your existing account.

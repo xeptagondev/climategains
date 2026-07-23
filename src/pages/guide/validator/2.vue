@@ -24,7 +24,7 @@ function proceed() {
 }
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title> Validation </template>
 		<template #default-view-body>
 			<div class="w-full mt-4 text-center">

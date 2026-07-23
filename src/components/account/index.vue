@@ -140,7 +140,7 @@ watch(
 					<button
 						type="button"
 						:disabled="isLoggingIn"
-						class="bg-blue-500 text-center py-3 text-center flex items-center justify-center w-full rounded-full font-bold mt-3 disabled:opacity-60"
+						class="pill-button mt-3 disabled:opacity-60"
 						@click="login()">
 						{{ isLoggingIn ? 'Signing in…' : 'Login' }}
 					</button>

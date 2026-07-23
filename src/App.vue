@@ -35,11 +35,17 @@ body {
 }
 #app {
 	position: relative;
-	height: 90vh;
-	border-radius: 20px;
 	display: block;
-	max-width: 450px;
-	margin: 50px auto;
+	height: 100vh;
+}
+/* Desktop-only "phone in browser" preview frame — real mobile builds must stay full-bleed. */
+@media (min-width: 768px) {
+	#app {
+		height: 90vh;
+		border-radius: 20px;
+		max-width: 450px;
+		margin: 50px auto;
+	}
 }
 .app-loading {
 	display: flex;
