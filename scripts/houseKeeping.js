@@ -1,14 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { execute } = require('./scriptUtils.js');
+const { rmSync } = require('node:fs');
 
 /**
  * It installs the project dependencies, removes the husky config incase already installed, re-installs husky, and adds a
  * commit-msg hook that runs commitlint
  */
-const projectSetup = () =>
-	execute(
-		`pnpm install && rm -rf .husky && npx husky install && npx husky add .husky/commit-msg 'npx --no -- commitlint --verbose --edit $1'`
+const projectSetup = () => {
+	rmSync('.husky', { recursive: true, force: true });
+	return execute(
+		`pnpm install && npx husky install && npx husky add .husky/commit-msg 'npx --no -- commitlint --verbose --edit $1'`
 	);
+};
 
 // House keeping
 /**
