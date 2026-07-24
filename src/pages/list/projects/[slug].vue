@@ -109,11 +109,11 @@ onMounted(async () => {
 					</div>
 					<div class="list_item">
 						<span class="font-bold">User</span>
-						<span class="font-light">{{ store.getUser(project_steps[0].submitter)[0].fullname }}</span>
+						<span class="font-light">{{ store.getUser(project_steps[0].submitter)[0]?.fullname ?? 'Unknown' }}</span>
 					</div>
 					<div class="list_item">
 						<span class="font-bold">Organization</span>
-						<span class="font-light">{{ store.getUser(project_steps[0].submitter)[0].organization }}</span>
+						<span class="font-light">{{ store.getUser(project_steps[0].submitter)[0]?.organization ?? 'Unknown' }}</span>
 					</div>
 					<div class="list_item">
 						<span class="font-bold">Timeline</span>
@@ -171,7 +171,7 @@ onMounted(async () => {
 
 									<p class="flex justify-between border-white/20 py-2 my-0">
 										<span class="font-bold">Submitted by</span>
-										{{ store.getUser(isSubmitted(item.id).submitter)[0].fullname }}
+										{{ store.getUser(isSubmitted(item.id).submitter)[0]?.fullname ?? 'Unknown' }}
 									</p>
 
 									<div v-if="isSubmitted(item.id).validation_status !== null">
