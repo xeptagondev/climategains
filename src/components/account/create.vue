@@ -139,7 +139,7 @@ async function submit() {
 						type="button"
 						:disabled="isSubmitting"
 						@click="submit()"
-						class="bg-blue-500 p-3 mx-10 text-center rounded-full font-bold mt-3 disabled:opacity-60">
+						class="pill-button mt-3 disabled:opacity-60">
 						{{ isSubmitting ? 'Signing up…' : 'Sign Up' }}
 					</button>
 				</div>
@@ -161,8 +161,10 @@ input {
 	background: none;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
+input::placeholder {
+	color: rgba(255, 255, 255, 0.65);
+}
 .account_create {
-	font-family: Helvetica, sans-serif;
 	@apply mb-10;
 }
 button:disabled {

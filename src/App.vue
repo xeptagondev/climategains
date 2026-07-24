@@ -31,12 +31,24 @@ supabase.auth.onAuthStateChange((_event, session) => {
 </template>
 <style>
 body {
+	margin: 0;
 	background: rgba(40, 40, 40, 0.9) !important;
 }
 #app {
 	position: relative;
 	display: block;
 	height: 100vh;
+	box-sizing: border-box;
+	/* body's grey is only meant to show around the desktop preview frame below;
+	   without an opaque background here, the new safe-area padding exposes it
+	   as an unwanted grey border on real devices. */
+	background: #000;
+	/* Android 15+ enforces edge-to-edge with no opt-out from Android 16 onward, so the
+	   WebView draws under the system status/nav bars. Pad the root shell by the real
+	   device insets (populated because index.html sets viewport-fit=cover) so content
+	   stays inside the visible/safe area instead of clipping behind system bars. */
+	padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+		env(safe-area-inset-left);
 }
 /* Desktop-only "phone in browser" preview frame — real mobile builds must stay full-bleed. */
 @media (min-width: 768px) {

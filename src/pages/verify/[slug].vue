@@ -131,7 +131,7 @@ selected.value = 'welcome';
 				<div class="list_item">
 					<b>Uploaded by</b>
 					<div class="flex items-center">
-						<span class="font-light">{{ store.getUser(entry(i).response.creator)[0].fullname }}</span>
+						<span class="font-light">{{ store.getUser(entry(i).response.creator)[0]?.fullname ?? 'Unknown' }}</span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"

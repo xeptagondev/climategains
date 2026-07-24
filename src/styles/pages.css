@@ -8,6 +8,6 @@ ul {
 }
 
 .pill-button {
-	@apply bg-black/50 border-none text-center py-2 flex items-center justify-center w-full rounded-full font-bold;
+	@apply bg-black/50 border-none text-center text-lg py-3 flex items-center justify-center w-full rounded-full font-bold;
 }
 
