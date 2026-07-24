@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    Android 15 (API 35) enforces edge-to-edge display by default for apps targeting
+    this SDK. This app's WebView content has no safe-area-inset handling anywhere
+    (no viewport-fit=cover, no env(safe-area-inset-*) CSS, no StatusBar plugin usage),
+    so edge-to-edge makes the WebView draw under the system status/navigation bars,
+    clipping the bottom tab bar and causing a slight vertical scroll/width mismatch.
+    Opt back out to the pre-15 windowing model until safe-area CSS is added properly.
+    Note: this opt-out flag is a temporary escape hatch Google has said will stop
+    working in a future Android release — treat as a stopgap, not a permanent fix.
+    -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@drawable/splash</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>
