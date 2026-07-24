@@ -168,12 +168,37 @@ watch(
 			</ion-toolbar>
 		</ion-header>
 
-		<div class="inline-block bg-blue/10 px-10">
+		<div class="create-account-shell px-10">
+			<div class="create-account-bg">
+				<img class="create-account-bg-img" src="../../assets/3.jpg" />
+				<div class="create-account-bg-overlay"></div>
+			</div>
 			<createAccount />
 		</div>
 	</ion-modal>
 </template>
 <style scoped>
+.create-account-shell {
+	position: relative;
+	min-height: 100%;
+}
+.create-account-bg {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	z-index: -1;
+}
+.create-account-bg-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.create-account-bg-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.3);
+}
 .button_el {
 	@apply py-4 text-xl items-center flex w-full;
 }
@@ -183,6 +208,9 @@ input {
 	outline: none;
 	background: none !important;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+input::placeholder {
+	color: rgba(255, 255, 255, 0.65);
 }
 .button_el svg {
 	@apply mr-2;
