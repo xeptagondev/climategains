@@ -24,6 +24,28 @@ allprojects {
     }
 }
 
+// AGP 8+ requires every android library module to declare a `namespace`, and
+// errors if it disagrees with the manifest's `package` attribute. Some pinned
+// Capacitor plugin packages (e.g. @capacitor/android 4.8.2) predate namespace
+// entirely, and a couple (@capacitor/haptics, @capacitor/keyboard 4.0.1) ship
+// a namespace that's flat-out wrong (copy-pasted from @capacitor/app's
+// template). Treat each module's own manifest package as the source of truth.
+subprojects { subproject ->
+    afterEvaluate {
+        if (subproject.hasProperty('android')) {
+            def androidExt = subproject.android
+            def manifestFile = subproject.file('src/main/AndroidManifest.xml')
+            if (manifestFile.exists()) {
+                def manifestXml = new XmlSlurper().parse(manifestFile)
+                def packageName = manifestXml.@package.text()
+                if (packageName && androidExt.namespace != packageName) {
+                    androidExt.namespace = packageName
+                }
+            }
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
