@@ -1,0 +1,30 @@
+# Normalize all text files to LF in the repository; check out with LF everywhere.
+# Prevents the whole-repo "phantom diff" from CRLF/LF mismatches on Windows checkouts.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Unix shell scripts / gradle wrapper must stay LF
+*.sh     text eol=lf
+gradlew  text eol=lf
+
+# Binary assets — never touch line endings or diff as text
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.pdf    binary
+*.jar    binary
+*.jks    binary
+*.keystore binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary
+*.mp4    binary
+*.webm   binary
+*.mov    binary

@@ -2,6 +2,7 @@
 node_modules
 /dist
 .husky
+.env
 
 # Local env files
 .env.local
