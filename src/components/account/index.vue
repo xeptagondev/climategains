@@ -135,8 +135,19 @@ watch(
 					Go Back
 				</div>
 				<div class="flex flex-col" v-show="accountState === 'login'">
-					<input class="" placeholder="Your Email" v-model="state.email" type="email" autocomplete="email" />
-					<input placeholder="Your Password" v-model="state.password" type="password" autocomplete="current-password" />
+					<input
+						class=""
+						placeholder="Your Email"
+						v-model="state.email"
+						type="email"
+						autocomplete="email"
+						@keyup.enter="login()" />
+					<input
+						placeholder="Your Password"
+						v-model="state.password"
+						type="password"
+						autocomplete="current-password"
+						@keyup.enter="login()" />
 					<button
 						type="button"
 						:disabled="isLoggingIn"

@@ -109,10 +109,23 @@ async function submit() {
 		<Splide ref="splide" class="w-full" :options="{ autoHeight: true, arrows: false, pagination: false, drag: false }">
 			<SplideSlide class="slide w-full">
 				<div class="flex flex-col">
-					<input placeholder="Your First Name" v-model="state.firstname" autocomplete="given-name" />
-					<input placeholder="Your Last Name" v-model="state.lastname" autocomplete="family-name" />
+					<input
+						placeholder="Your First Name"
+						v-model="state.firstname"
+						autocomplete="given-name"
+						@keyup.enter="submit()" />
+					<input
+						placeholder="Your Last Name"
+						v-model="state.lastname"
+						autocomplete="family-name"
+						@keyup.enter="submit()" />
 
-					<input placeholder="Your Email" v-model="state.email" type="email" autocomplete="email" />
+					<input
+						placeholder="Your Email"
+						v-model="state.email"
+						type="email"
+						autocomplete="email"
+						@keyup.enter="submit()" />
 					<div class="w-full text-left">
 						<input
 							class="w-full"
@@ -120,12 +133,16 @@ async function submit() {
 							v-model="state.password"
 							placeholder="Your Password"
 							type="password"
-							autocomplete="new-password" />
+							autocomplete="new-password"
+							@keyup.enter="submit()" />
 						<label for="password" class="text-xs text-left text-white/60">
 							Your password must be at least 8 characters and contain uppercase, lowercase, and a number.
 						</label>
 					</div>
-					<input v-model="state.organization" placeholder="Your Organization / Company" />
+					<input
+						v-model="state.organization"
+						placeholder="Your Organization / Company"
+						@keyup.enter="submit()" />
 
 					<button
 						type="button"
