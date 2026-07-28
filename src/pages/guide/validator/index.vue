@@ -18,7 +18,8 @@ const showModal = () => {
 };
 </script>
 <template>
-	<page-view hide-header>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
+	<page-view hide-header hide-background>
 		<template #default-view-title>Climate Gains</template>
 		<template #default-view-body>
 			<div class="flex flex-col justify-center items-center">
@@ -33,7 +34,7 @@ const showModal = () => {
 			</div>
 
 			<div class="col-4 mx-auto text-center mt-1">
-				<div class="action_button" @click="() => router.push('./validator/1')">Next</div>
+				<div class="action_button" v-clickable @click="() => router.push('./validator/1')">Next</div>
 			</div>
 		</template>
 	</page-view>

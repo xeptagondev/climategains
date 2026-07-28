@@ -16,15 +16,18 @@ const date = new Date().toLocaleDateString('en-uk', {
 </script>
 
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<tab-view>
 		<template #default-view-title>
 			<div class="text-center">Start</div>
 		</template>
 		<template #default-view-body>
 			<div class="h-full absolute top-0 w-full overflow-hidden">
-				<img class="w-full top-60 absolute h-full" src="../assets/3.jpg" />
-				<div class="w-full mt-4 flex items-center justify-between" @click="() => router.push('../account')">
-					<img class="ml-4" style="height: 31px" src="../assets/logo_white_alt.png" />
+				<div
+					class="w-full mt-4 flex items-center justify-between"
+					v-clickable
+					@click="() => router.push('../account')">
+					<img class="ml-4" style="height: 31px" src="../assets/logo_white_alt.png" alt="ClimateGains" />
 					<div v-if="store.isAuthenticated" class="flex items-center mr-6" aria-label="Account">
 						<div
 							class="w-9 h-9 rounded-full bg-white/15 border border-white/40 flex items-center justify-center text-white font-bold text-base">
@@ -53,6 +56,7 @@ const date = new Date().toLocaleDateString('en-uk', {
 				<div class="actions flex mx-auto flex-col">
 					<div
 						class="bg-black/20 py-3 px-6 text-white inline-block w-full border-white/20 border-b"
+						v-clickable
 						@click="() => router.push('../guide/activist')">
 						<h3 class="mt-0 mb-2 flex items-center">
 							Create a Climate Action
@@ -73,6 +77,7 @@ const date = new Date().toLocaleDateString('en-uk', {
 					</div>
 					<div
 						class="bg-black/20 py-3 px-6 text-white inline-block w-full"
+						v-clickable
 						@click="() => router.push('../guide/validator')">
 						<h3 class="mt-0 mb-2 flex items-center">
 							Validate a Climate Action

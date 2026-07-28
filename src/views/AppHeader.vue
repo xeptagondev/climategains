@@ -9,8 +9,12 @@ const router = useRouter();
 </script>
 
 <template>
-	<div class="app-header w-full mt-4 flex items-center justify-between" @click="() => router.push('/account')">
-		<img class="ml-4" style="height: 31px" src="../assets/logo_white_alt.png" />
+	<!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
+	<div
+		class="app-header w-full mt-4 flex items-center justify-between"
+		v-clickable
+		@click="() => router.push('/account')">
+		<img class="ml-4" style="height: 31px" src="../assets/logo_white_alt.png" alt="ClimateGains" />
 		<div v-if="!store.isAuthenticated" class="flex text-lg font-bold items-center mr-6 text-white">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2">
 				<path

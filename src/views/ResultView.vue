@@ -10,7 +10,11 @@ const router = useRouter();
 	<ion-page>
 		<slot name="default-head-view"> </slot>
 		<ion-header class="ion-no-border">
-			<div class="nav_forward flex items-center justify-start" @click="() => router.push('/account/')">
+			<!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
+			<div
+				class="nav_forward flex items-center justify-start"
+				v-clickable
+				@click="() => router.push('/account/')">
 				<p class="ml-6 mr-2">My Account</p>
 				<ion-icon :icon="arrowForward" />
 			</div>

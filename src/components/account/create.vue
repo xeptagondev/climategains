@@ -8,7 +8,6 @@ import '@splidejs/vue-splide/css';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 
 const splide = ref();
-const error = ref();
 const router = useRouter();
 const isSubmitting = ref(false);
 
@@ -30,13 +29,8 @@ const state = reactive({
 	firstname: '',
 	lastname: '',
 	email: '',
-	role: 'developer',
-	password: '',
-	timezone: '',
-	language: 'en'
+	password: ''
 });
-
-state.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function validate(): string | null {
 	const firstname = (state.firstname ?? '').trim();
@@ -76,7 +70,6 @@ async function submit() {
 		user.email = user.email.trim();
 
 		const result = await apiSignUp(user);
-		console.log('[signup v2] submit result:', JSON.stringify(result));
 
 		switch (result?.status) {
 			case 'created':
@@ -113,7 +106,6 @@ async function submit() {
 <template>
 	<div class="account_create">
 		<h1 class="mb-2">Create your account</h1>
-		{{ error }}
 		<Splide ref="splide" class="w-full" :options="{ autoHeight: true, arrows: false, pagination: false, drag: false }">
 			<SplideSlide class="slide w-full">
 				<div class="flex flex-col">

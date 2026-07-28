@@ -23,6 +23,7 @@ function getIcon(value) {
 }
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<page-view>
 		<template #default-view-title>
 			<div class="ml-1">My Account</div>
@@ -49,6 +50,7 @@ function getIcon(value) {
 				<div
 					v-for="(item, index) in userRoles.filter(x => x.project_id !== null)"
 					:key="index"
+					v-clickable
 					@click="() => router.push(`./projects/${store.getProject(item.project_id).id}`)"
 					class="flex flex-col relative justify-between rounded-xl bg-white/10 pb-16 overflow-hidden my-3">
 					<div class="flex px-3 bg-white/5 py-3 items-center font-bold">

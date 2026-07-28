@@ -169,10 +169,7 @@ watch(
 		</ion-header>
 
 		<div class="create-account-shell px-10">
-			<div class="create-account-bg">
-				<img class="create-account-bg-img" src="../../assets/3.jpg" />
-				<div class="create-account-bg-overlay"></div>
-			</div>
+			<PageBackground />
 			<createAccount />
 		</div>
 	</ion-modal>
@@ -181,23 +178,6 @@ watch(
 .create-account-shell {
 	position: relative;
 	min-height: 100%;
-}
-.create-account-bg {
-	position: absolute;
-	inset: 0;
-	overflow: hidden;
-	pointer-events: none;
-	z-index: -1;
-}
-.create-account-bg-img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-.create-account-bg-overlay {
-	position: absolute;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.3);
 }
 .button_el {
 	@apply py-4 text-xl items-center flex w-full;

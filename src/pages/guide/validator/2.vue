@@ -24,7 +24,8 @@ function proceed() {
 }
 </script>
 <template>
-	<page-view hide-header>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
+	<page-view hide-header hide-background>
 		<template #default-view-title> Validation </template>
 		<template #default-view-body>
 			<div class="w-full mt-4 text-center">
@@ -338,7 +339,7 @@ function proceed() {
 			</Splide>
 
 			<div class="absolute w-full bottom-0 mx-auto text-center">
-				<div class="bg-blue-600 flex items-center justify-center py-4 text-xl font-bold" @click="proceed()">
+				<div class="bg-blue-600 flex items-center justify-center py-4 text-xl font-bold" v-clickable @click="proceed()">
 					Browse Climate Actions
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="ml-2 w-7 h-7">
 						<path
