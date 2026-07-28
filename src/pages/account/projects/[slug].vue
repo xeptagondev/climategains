@@ -47,19 +47,19 @@
 
 					<ul class="px-4">
 						<li class="inline-flex w-full py-3 border-b border-white/20 justify-between">
-							<span class="font-bold">Project Name</span><span> {{ project.name }}</span>
+							<span class="font-bold">Project Name</span><span> {{ project?.name }}</span>
 						</li>
 						<li class="inline-flex w-full py-3 border-b border-white/20 justify-between">
-							<span class="font-bold">Project ID</span><span> {{ project.id }}</span>
+							<span class="font-bold">Project ID</span><span> {{ project?.id }}</span>
 						</li>
 						<li class="inline-flex w-full py-3 border-b border-white/20 justify-between">
-							<span class="font-bold"> Programme</span><span> {{ programme.name }}</span>
+							<span class="font-bold"> Programme</span><span> {{ programme?.name }}</span>
 						</li>
 						<li class="inline-flex w-full py-3 border-b border-white/20 justify-between">
-							<span class="font-bold">Sector</span><span> {{ programme.default_sector }}</span>
+							<span class="font-bold">Sector</span><span> {{ programme?.default_sector }}</span>
 						</li>
 						<li class="inline-flex w-full py-3 border-b border-white/20 justify-between">
-							<span class="font-bold">Date Submitted</span><span> {{ project.created }}</span>
+							<span class="font-bold">Date Submitted</span><span> {{ project?.created }}</span>
 						</li>
 					</ul>
 					<div class="w-full flex items-center mt-0 mb-0 bg-white/10">

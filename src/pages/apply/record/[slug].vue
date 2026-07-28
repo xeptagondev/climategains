@@ -403,7 +403,8 @@ async function createProject() {
 			console.log('[record] place lookup failed:', err);
 		}
 	}
-	const projectName = action.name.split(' ')[0] + '-' + profile().fullname.toLowerCase().replace(' ', '-');
+	const projectName =
+		action.name.split(' ')[0] + '-' + (profile()?.fullname ?? store.user.account.id).toLowerCase().replace(' ', '-');
 	const { data, error } = await supabase
 		.from('project')
 		.insert([

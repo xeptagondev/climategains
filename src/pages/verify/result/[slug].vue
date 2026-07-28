@@ -50,7 +50,7 @@
 					</p>
 					<h3 class="font-bold text-xl my-3">Thank you for verifying this action and fighting climate change!</h3>
 					<p class="leading-normal">
-						<b class="underline">{{ programme.name }}</b> has received your appraisal, and the funds will be released
+						<b class="underline">{{ programme?.name }}</b> has received your appraisal, and the funds will be released
 						after three more positive evaluations. With your help, this project is one step closer to becoming reality.
 					</p>
 					<p class="leading-normal">

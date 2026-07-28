@@ -72,7 +72,7 @@ function formatLocation(loc) {
 						v-clickable
 						@click="() => router.push(`list/projects/${item.id}`)">
 						<div class="flex items-start">
-							<icon :type="getIcon(programme(item.programme_id).default_sector)" />
+							<icon :type="getIcon(programme(item.programme_id)?.default_sector)" />
 							<div>
 								<b class="my-0">{{ item.name }}</b>
 								<p class="mt-1">{{ formatLocation(item.location_name) }}</p>
