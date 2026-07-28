@@ -334,7 +334,6 @@ async function fetchPlace(coordinates) {
 	);
 
 	const place = await response.json();
-	console.log(place);
 	if (!place.features || place.features.length === 0) {
 		return '';
 	}
@@ -343,9 +342,6 @@ async function fetchPlace(coordinates) {
 }
 
 async function createResponse(item, position, stepId) {
-	console.log(item);
-	console.log(position);
-	console.log(stepId);
 	const { data, error } = await supabase
 		.from('response')
 		.insert([
@@ -360,8 +356,7 @@ async function createResponse(item, position, stepId) {
 		])
 		.select();
 
-	console.log(error);
-	console.log(data);
+	if (error) throw error;
 	return data;
 }
 
@@ -371,8 +366,7 @@ async function createStep(id) {
 		.insert([{ project_id: id, programme_step_id: steps[0].id, submitter: store.user.account.id }])
 		.select();
 
-	console.log(error);
-	console.log(data);
+	if (error) throw error;
 	return data;
 }
 
@@ -422,17 +416,13 @@ async function createProject() {
 			}
 		])
 		.select();
+	if (error) throw error;
 	const project_id = data[0].id;
 	const step = await createStep(project_id);
 	const stepId = step[0].id;
 
-	for (let i = 0; i < responses.value.length; i++) {
-		createResponse(responses.value[i], position, stepId);
-	}
+	await Promise.all(responses.value.map(item => createResponse(item, position, stepId)));
 
-	console.log(data);
-	console.log(error);
-	console.log(step);
 	await store.fetchProjects();
 	await store.fetchSteps();
 	await store.fetchRoles();
@@ -468,8 +458,8 @@ onIonViewWillEnter(() => {
 		path: VIDEO_DIR,
 		directory: Directory.Data
 	}).then(
-		result => {
-			console.log(result.files);
+		() => {
+			// Directory already exists — nothing to do.
 		},
 		async err => {
 			// Folder does not yet exists!
