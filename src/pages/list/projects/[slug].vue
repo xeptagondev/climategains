@@ -19,9 +19,9 @@ const router = useRouter();
 const modalIsOpen = ref(false);
 
 const project = store.getProject(route.params.slug);
-const programme = store.getProgramme(project.programme_id);
+const programme = store.getProgramme(project?.programme_id);
 const programme_steps = store.global.steps
-	.filter(x => x.programme_id === project.programme_id)
+	.filter(x => x.programme_id === project?.programme_id)
 	.sort((a, b) => a.order - b.order);
 const project_steps = ref([]);
 

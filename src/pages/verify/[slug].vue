@@ -67,9 +67,9 @@ onMounted(async () => {
 	response.value = await getResponse(step.value[0].id);
 
 	project.value = store.getProject(step.value[0].project_id);
-	programme.value = store.getProgramme(project.value.programme_id);
+	programme.value = store.getProgramme(project.value?.programme_id);
 	questions.value = store.global.questions
-		.filter(x => x.programme_step_id === programme.value.id)
+		.filter(x => x.programme_step_id === programme.value?.id)
 		.sort((a, b) => a.order - b.order);
 });
 selected.value = 'welcome';

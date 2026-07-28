@@ -198,7 +198,7 @@ const route = useRoute();
 
 const project = store.getProject(route.params.slug);
 
-const programme = store.getProgramme(project.programme_id);
+const programme = store.getProgramme(project?.programme_id);
 
 onBeforeUnmount(() => {});
 </script>
