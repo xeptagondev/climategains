@@ -199,7 +199,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-store.fetchProjects();
+await store.fetchProjects();
 
 const project = store.getProject(route.params.slug);
 

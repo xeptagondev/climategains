@@ -64,12 +64,13 @@ function entry(index) {
 
 onMounted(async () => {
 	step.value = await getStepsFromProjectId(route.params.slug);
+	if (!step.value?.length) return;
 	response.value = await getResponse(step.value[0].id);
 
 	project.value = store.getProject(step.value[0].project_id);
 	programme.value = store.getProgramme(project.value?.programme_id);
 	questions.value = store.global.questions
-		.filter(x => x.programme_step_id === programme.value?.id)
+		.filter(x => x.programme_step_id === step.value[0]?.programme_step_id)
 		.sort((a, b) => a.order - b.order);
 });
 selected.value = 'welcome';
@@ -121,11 +122,9 @@ selected.value = 'welcome';
 				</div>
 			</div>
 			<div class="flex justify-between items-center">
-				<div class="action_button bg-white/10 border-b border-white/10" @click="showModal('verify')">Ask an Expert</div>
+				<div class="action_button bg-white/10 border-b border-white/10">Ask an Expert</div>
 
-				<div class="action_button bg-white/10 border-l border-b border-white/10" @click="showModal('flag')">
-					Send a Question
-				</div>
+				<div class="action_button bg-white/10 border-l border-b border-white/10">Send a Question</div>
 			</div>
 			<div class="mx-0 pb-10" v-if="step && response[i]">
 				<div class="list_item">

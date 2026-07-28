@@ -2,6 +2,7 @@
 import 'swiper/css';
 import { useRouter } from 'vue-router';
 import useStore from '@/store';
+import { supabase } from '@/helpers/api';
 import accountView from '@/components/account/index.vue';
 
 const store = useStore();
@@ -16,9 +17,11 @@ function profile() {
 	} else return false;
 }
 
-function logOut() {
+async function logOut() {
+	await supabase.auth.signOut();
 	store.isAuthenticated = false;
 	store.user.account = null;
+	store.user.session = null;
 }
 </script>
 <template>
