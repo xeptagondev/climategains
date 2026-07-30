@@ -2,7 +2,8 @@
 import { IonContent, IonButtons, IonBackButton, IonPage, IonHeader, IonTitle, IonToolbar } from '@ionic/vue';
 
 defineProps({
-	hideHeader: { type: Boolean, default: false }
+	hideHeader: { type: Boolean, default: false },
+	hideBackground: { type: Boolean, default: false }
 });
 </script>
 
@@ -21,6 +22,7 @@ defineProps({
 
 		<ion-content fullscreen>
 			<div class="page-view-shell">
+				<PageBackground v-if="!hideBackground" />
 				<AppHeader v-if="!hideHeader" />
 				<slot name="default-view-body"></slot>
 			</div>

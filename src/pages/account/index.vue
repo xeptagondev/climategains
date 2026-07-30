@@ -1,8 +1,8 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <script setup lang="ts">
 import 'swiper/css';
 import { useRouter } from 'vue-router';
 import useStore from '@/store';
+import { supabase } from '@/helpers/api';
 import accountView from '@/components/account/index.vue';
 
 const store = useStore();
@@ -17,12 +17,15 @@ function profile() {
 	} else return false;
 }
 
-function logOut() {
+async function logOut() {
+	await supabase.auth.signOut();
 	store.isAuthenticated = false;
 	store.user.account = null;
+	store.user.session = null;
 }
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<tab-view>
 		<template #default-view-body>
 			<div v-if="store.isAuthenticated">
@@ -32,15 +35,15 @@ function logOut() {
 					<div class="bg-gray/20 p-3 rounded-lg">
 						<h3 class="mt-0 font-bold" v-if="profile() && profile().fullname">{{ profile().fullname }}</h3>
 
-						<p cl><b>Email</b>: {{ store.user.account.email }}</p>
+						<p class="my-0"><b>Email</b>: {{ store.user.account.email }}</p>
 
 						<p class="my-0"><b>Last Sign In</b>: {{ store.user.account.last_sign_in_at }}</p>
 					</div>
 
-					<div class="pill-button my-3" @click="logOut()">Logout</div>
+					<div class="pill-button my-3" v-clickable @click="logOut()">Logout</div>
 				</div>
 				<ul class="items m-4">
-					<li class="flex items-center justify-between" @click="() => router.push(`../account/profile`)">
+					<li class="flex items-center justify-between" v-clickable @click="() => router.push(`../account/profile`)">
 						<span class="flex items-center">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +71,7 @@ function logOut() {
 							</svg>
 						</span>
 					</li>
-					<li class="flex items-center justify-between" @click="() => router.push(`../account/projects`)">
+					<li class="flex items-center justify-between" v-clickable @click="() => router.push(`../account/projects`)">
 						<span class="flex items-center">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

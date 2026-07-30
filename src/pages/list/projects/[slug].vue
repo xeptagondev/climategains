@@ -19,9 +19,9 @@ const router = useRouter();
 const modalIsOpen = ref(false);
 
 const project = store.getProject(route.params.slug);
-const programme = store.getProgramme(project.programme_id);
+const programme = store.getProgramme(project?.programme_id);
 const programme_steps = store.global.steps
-	.filter(x => x.programme_id === project.programme_id)
+	.filter(x => x.programme_id === project?.programme_id)
 	.sort((a, b) => a.order - b.order);
 const project_steps = ref([]);
 
@@ -63,6 +63,7 @@ onMounted(async () => {
 });
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<page-view hide-header>
 		<template #default-view-title>
 			<!-- <div class="ml-1">{{ $route.params.slug }}</div> -->
@@ -157,7 +158,7 @@ onMounted(async () => {
 				<div v-if="project_steps[0]" class="flex px-4 mt-3 flex-col items-center justify-center">
 					<div v-for="(item, index) in programme_steps" :key="index">
 						<div v-if="isSubmitted(item.id)">
-							<div class="rounded-lg relative mb-3 overflow-hidden bg-green-800" @click="signup()">
+							<div class="rounded-lg relative mb-3 overflow-hidden bg-green-800" v-clickable @click="signup()">
 								<div class="px-3">
 									<h3 class="mb-0 flex items-center">
 										<span class="bg-white text-green-800 text-xs rounded-lg mr-3 p-2">Step {{ item.order / 100 }}</span
@@ -233,7 +234,7 @@ onMounted(async () => {
 					<ion-header>
 						<ion-toolbar>
 							<ion-buttons slot="start">
-								<div class="pl-4 flex items-center text-xl" @click="modalIsOpen = false">
+								<div class="pl-4 flex items-center text-xl" v-clickable @click="modalIsOpen = false">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"

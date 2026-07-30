@@ -23,12 +23,13 @@ function getIcon(value) {
 }
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<page-view>
 		<template #default-view-title>
 			<div class="ml-1">My Account</div>
 		</template>
 		<template #default-view-body>
-			<div class="w-full flex items-center mt-0 mb-0 bg-white/10">
+			<div class="w-full flex items-center mt-24 mb-0 bg-white/10">
 				<h3 class="text-xl text-white w-full pl-5 my-0 text-center font-bold mx-auto flex items-center py-4">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -49,23 +50,24 @@ function getIcon(value) {
 				<div
 					v-for="(item, index) in userRoles.filter(x => x.project_id !== null)"
 					:key="index"
-					@click="() => router.push(`./projects/${store.getProject(item.project_id).id}`)"
+					v-clickable
+					@click="() => router.push(`./projects/${store.getProject(item.project_id)?.id}`)"
 					class="flex flex-col relative justify-between rounded-xl bg-white/10 pb-16 overflow-hidden my-3">
 					<div class="flex px-3 bg-white/5 py-3 items-center font-bold">
-						<icon :type="getIcon(store.getProgramme(store.getProject(item.project_id).programme_id).default_sector)" />
+						<icon :type="getIcon(store.getProgramme(store.getProject(item.project_id)?.programme_id)?.default_sector)" />
 						<h4 class="text-base my-0">
-							{{ store.getProgramme(store.getProject(item.project_id).programme_id).name }}
+							{{ store.getProgramme(store.getProject(item.project_id)?.programme_id)?.name }}
 						</h4>
 					</div>
 					<div class="mx-3 mb-2">
 						<p class="mb-0">
 							<span class="font-bold">Project Name</span><br />
-							{{ store.getProject(item.project_id).name }}
+							{{ store.getProject(item.project_id)?.name }}
 						</p>
 
 						<p class="my-0">
 							<span class="font-bold"> Submitted on</span><br />
-							{{ store.getProject(item.project_id).created }}
+							{{ store.getProject(item.project_id)?.created }}
 						</p>
 					</div>
 					<div

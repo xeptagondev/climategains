@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
 import { alertController } from '@ionic/vue';
 import { apiSignUp } from '@/helpers/api';
 
-import '@splidejs/vue-splide/css';
-import { Splide, SplideSlide } from '@splidejs/vue-splide';
-
-const splide = ref();
-const error = ref();
-const router = useRouter();
 const isSubmitting = ref(false);
+const submitted = ref(false);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -30,13 +24,8 @@ const state = reactive({
 	firstname: '',
 	lastname: '',
 	email: '',
-	role: 'developer',
-	password: '',
-	timezone: '',
-	language: 'en'
+	password: ''
 });
-
-state.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function validate(): string | null {
 	const firstname = (state.firstname ?? '').trim();
@@ -76,14 +65,13 @@ async function submit() {
 		user.email = user.email.trim();
 
 		const result = await apiSignUp(user);
-		console.log('[signup v2] submit result:', JSON.stringify(result));
 
 		switch (result?.status) {
 			case 'created':
 			case 'pending_confirmation':
 				// New user OR existing-unconfirmed (Supabase auto-resent email).
 				// Either way the user just needs to check their inbox.
-				splide.value.go(1);
+				submitted.value = true;
 				break;
 			case 'already_exists':
 				await presentAlert(
@@ -113,45 +101,55 @@ async function submit() {
 <template>
 	<div class="account_create">
 		<h1 class="mb-2">Create your account</h1>
-		{{ error }}
-		<Splide ref="splide" class="w-full" :options="{ autoHeight: true, arrows: false, pagination: false, drag: false }">
-			<SplideSlide class="slide w-full">
-				<div class="flex flex-col">
-					<input placeholder="Your First Name" v-model="state.firstname" autocomplete="given-name" />
-					<input placeholder="Your Last Name" v-model="state.lastname" autocomplete="family-name" />
+		<div v-if="!submitted" class="flex flex-col">
+			<input
+				placeholder="Your First Name"
+				v-model="state.firstname"
+				autocomplete="given-name"
+				@keyup.enter="submit()" />
+			<input
+				placeholder="Your Last Name"
+				v-model="state.lastname"
+				autocomplete="family-name"
+				@keyup.enter="submit()" />
 
-					<input placeholder="Your Email" v-model="state.email" type="email" autocomplete="email" />
-					<div class="w-full text-left">
-						<input
-							class="w-full"
-							id="password"
-							v-model="state.password"
-							placeholder="Your Password"
-							type="password"
-							autocomplete="new-password" />
-						<label for="password" class="text-xs text-left text-white/60">
-							Your password must be at least 8 characters and contain uppercase, lowercase, and a number.
-						</label>
-					</div>
-					<input v-model="state.organization" placeholder="Your Organization / Company" />
+			<input
+				placeholder="Your Email"
+				v-model="state.email"
+				type="email"
+				autocomplete="email"
+				@keyup.enter="submit()" />
+			<div class="w-full text-left">
+				<input
+					class="w-full"
+					id="password"
+					v-model="state.password"
+					placeholder="Your Password"
+					type="password"
+					autocomplete="new-password"
+					@keyup.enter="submit()" />
+				<label for="password" class="text-xs text-left text-white/60">
+					Your password must be at least 8 characters and contain uppercase, lowercase, and a number.
+				</label>
+			</div>
+			<input
+				v-model="state.organization"
+				placeholder="Your Organization / Company"
+				@keyup.enter="submit()" />
 
-					<button
-						type="button"
-						:disabled="isSubmitting"
-						@click="submit()"
-						class="pill-button mt-3 disabled:opacity-60">
-						{{ isSubmitting ? 'Signing up…' : 'Sign Up' }}
-					</button>
-				</div>
-			</SplideSlide>
-			<SplideSlide class="slide w-full"
-				><div>
-					<h1 class="text-xl font-bold bg-green-500/20 p-4 rounded-xl">Welcome onboard!</h1>
-					<p class="text-xl">In order to use your account you must check your inbox for a confirmation email.</p>
-					<p class="text-xl">Once confirmed you can log in to the application.</p>
-				</div></SplideSlide
-			>
-		</Splide>
+			<button
+				type="button"
+				:disabled="isSubmitting"
+				@click="submit()"
+				class="pill-button mt-3 disabled:opacity-60">
+				{{ isSubmitting ? 'Signing up…' : 'Sign Up' }}
+			</button>
+		</div>
+		<div v-else>
+			<h1 class="text-xl font-bold bg-green-500/20 p-4 rounded-xl">Welcome onboard!</h1>
+			<p class="text-xl">In order to use your account you must check your inbox for a confirmation email.</p>
+			<p class="text-xl">Once confirmed you can log in to the application.</p>
+		</div>
 	</div>
 </template>
 <style scoped>

@@ -20,10 +20,7 @@ export default defineComponent({
 	<IonPage>
 		<IonContent>
 			<div class="tab-view-shell">
-				<div class="tab-view-bg">
-					<img class="tab-view-bg-img" src="../assets/3.jpg" />
-					<div class="tab-view-bg-overlay"></div>
-				</div>
+				<PageBackground />
 				<AppHeader />
 				<slot name="default-view-body"></slot>
 			</div>
@@ -32,7 +29,7 @@ export default defineComponent({
 			<IonTabs>
 				<IonRouterOutlet></IonRouterOutlet>
 				<IonTabBar slot="bottom">
-					<IonTabButton tab="home" href="./">
+					<IonTabButton tab="home" href="/">
 						<IonIcon :icon="homeOutline"></IonIcon>
 					</IonTabButton>
 
@@ -61,22 +58,5 @@ export default defineComponent({
 	position: relative;
 	min-height: 100%;
 	display: flow-root;
-}
-.tab-view-bg {
-	position: absolute;
-	inset: 0;
-	overflow: hidden;
-	pointer-events: none;
-	z-index: -1;
-}
-.tab-view-bg-img {
-	width: 100%;
-	height: 100%;
-	/* object-fit: cover; */
-}
-.tab-view-bg-overlay {
-	position: absolute;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.3);
 }
 </style>

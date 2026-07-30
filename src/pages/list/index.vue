@@ -1,4 +1,3 @@
-<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import useStore from '@/store/index.js';
@@ -50,12 +49,14 @@ function formatLocation(loc) {
 }
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<tab-view>
 		<template #default-view-body>
 			<div v-if="store.role == 'validator'">
 				<div
 					v-if="store.isAuthenticated"
 					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-10 bottom-10 py-2"
+					v-clickable
 					@click="changeRole('activist')">
 					Switch to Activist
 				</div>
@@ -68,10 +69,10 @@ function formatLocation(loc) {
 					<li
 						v-for="(item, index) in store.global.projects"
 						:key="index"
-						@click="() => router.push(`list/projects/${item.id}`)"
-						@keydown="222">
+						v-clickable
+						@click="() => router.push(`list/projects/${item.id}`)">
 						<div class="flex items-start">
-							<icon :type="getIcon(programme(item.programme_id).default_sector)" />
+							<icon :type="getIcon(programme(item.programme_id)?.default_sector)" />
 							<div>
 								<b class="my-0">{{ item.name }}</b>
 								<p class="mt-1">{{ formatLocation(item.location_name) }}</p>
@@ -89,6 +90,7 @@ function formatLocation(loc) {
 				<div
 					v-if="store.isAuthenticated"
 					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 absolute right-10 bottom-10 py-2"
+					v-clickable
 					@click="changeRole('validator')">
 					Switch to Validator
 				</div>
@@ -102,8 +104,8 @@ function formatLocation(loc) {
 					<li
 						v-for="(item, index) in store.global.programmes"
 						:key="index"
-						@click="() => router.push(`list/programmes/${item.id}`)"
-						@keydown="222">
+						v-clickable
+						@click="() => router.push(`list/programmes/${item.id}`)">
 						<div class="flex items-start">
 							<icon :type="getIcon(item.default_sector)" />
 

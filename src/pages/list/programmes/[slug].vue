@@ -42,6 +42,7 @@ function signup() {
 }
 </script>
 <template>
+	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
 	<page-view hide-header>
 		<template #default-view-title>
 			<!-- <div class="ml-1">{{ $route.params.slug }}</div> -->
@@ -172,12 +173,13 @@ function signup() {
 
 					<Splide :options="{ autoHeight: true }">
 						<SplideSlide class="slide" v-for="(item, key) in store.getGallery(programme.id)">
-							<img :src="item.url" />
+							<img :src="item.url" :alt="item.caption || programme.name" />
 						</SplideSlide>
 					</Splide>
 
 					<div
 						class="w-full text-center flex items-center justify-center text-xl font-bold bg-blue-600 py-4 capitalize"
+						v-clickable
 						@click="signup()">
 						Sign up for Action
 						<svg
@@ -198,7 +200,7 @@ function signup() {
 						<ion-header>
 							<ion-toolbar>
 								<ion-buttons slot="start">
-									<div class="pl-4 flex items-center text-xl" @click="modalIsOpen = false">
+									<div class="pl-4 flex items-center text-xl" v-clickable @click="modalIsOpen = false">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
