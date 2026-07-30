@@ -179,10 +179,12 @@ watch(
 			</ion-toolbar>
 		</ion-header>
 
-		<div class="create-account-shell px-10">
-			<PageBackground />
-			<createAccount />
-		</div>
+		<ion-content>
+			<div class="create-account-shell px-10">
+				<PageBackground />
+				<createAccount />
+			</div>
+		</ion-content>
 	</ion-modal>
 </template>
 <style scoped>

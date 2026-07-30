@@ -20,7 +20,7 @@ const date = new Date().toLocaleDateString('en-uk', {
 			<div class="text-center">Start</div>
 		</template>
 		<template #default-view-body>
-			<div class="h-full absolute top-0 w-full overflow-hidden">
+			<div class="w-full">
 				<div class="mt-24 pl-2 shadow-none bg-white/0 text-black w-full mx-auto">
 					<ion-card-header>
 						<ion-card-subtitle class="text-white text-2xl capitalize font-light border-white/30">{{
