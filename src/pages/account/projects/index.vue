@@ -29,7 +29,7 @@ function getIcon(value) {
 			<div class="ml-1">My Account</div>
 		</template>
 		<template #default-view-body>
-			<div class="w-full flex items-center mt-0 mb-0 bg-white/10">
+			<div class="w-full flex items-center mt-24 mb-0 bg-white/10">
 				<h3 class="text-xl text-white w-full pl-5 my-0 text-center font-bold mx-auto flex items-center py-4">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

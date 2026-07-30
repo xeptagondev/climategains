@@ -29,7 +29,7 @@ export default defineComponent({
 			<IonTabs>
 				<IonRouterOutlet></IonRouterOutlet>
 				<IonTabBar slot="bottom">
-					<IonTabButton tab="home" href="./">
+					<IonTabButton tab="home" href="/">
 						<IonIcon :icon="homeOutline"></IonIcon>
 					</IonTabButton>
 
