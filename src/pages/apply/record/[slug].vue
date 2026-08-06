@@ -146,7 +146,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { toastController } from '@ionic/vue';
 
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import '@splidejs/vue-splide/css';
@@ -174,9 +174,26 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
+async function showToast(message) {
+	const t = await toastController.create({
+		message,
+		duration: 3500,
+		color: 'danger',
+		position: 'top'
+	});
+	await t.present();
+}
+
 const action = store.global.programmes.filter(x => x.id == route.params.slug)[0];
-const steps = store.getSteps(action.id).sort((a, b) => a.id - b.id);
-const questions = store.global.questions.filter(x => x.programme_step_id === steps[0].id);
+const steps = action ? store.getSteps(action.id).sort((a, b) => a.id - b.id) : [];
+const questions = steps.length ? store.global.questions.filter(x => x.programme_step_id === steps[0].id) : [];
+
+const isValidAction = !!(action && steps.length);
+if (!isValidAction) {
+	showToast('This climate action is not available for sign-up right now.');
+	router.replace('/list');
+}
+
 const cameraActive = ref(false);
 const play = ref(false);
 const recording = ref(false);
@@ -187,6 +204,9 @@ const splide = ref();
 const videoPlayer = ref();
 const responses = ref([]);
 const submitting = ref(false);
+// Tracks openCamera()'s in-flight promise so onIonViewWillLeave can wait it out before
+// stopping — see the note there for why.
+let openCameraPromise = null;
 function getUrl(value) {
 	return Capacitor.convertFileSrc(value);
 }
@@ -223,16 +243,6 @@ async function saveVideo(path) {
 	});
 
 	videoFile.value = savedFile;
-}
-
-async function showToast(message) {
-	const t = await toastController.create({
-		message,
-		duration: 3500,
-		color: 'danger',
-		position: 'top'
-	});
-	await t.present();
 }
 
 async function ensureMicPermission() {
@@ -307,15 +317,23 @@ function nextQ(index) {
 }
 
 async function openCamera() {
-	try {
-		await ensureMicPermission();
-		cameraActive.value = true;
-		await CameraPreview.start(cameraOptions);
-	} catch (err) {
-		console.log('[record] openCamera error:', err);
-		cameraActive.value = false;
-		await showToast(`Could not open camera: ${err?.message || err}`);
-	}
+	openCameraPromise = (async () => {
+		try {
+			await ensureMicPermission();
+			cameraActive.value = true;
+			// CameraPreview.start() positions the native view over the #cameraPreview element by
+			// id, so the div must actually be in the DOM first. cameraActive only flips the v-if on
+			// this tick's virtual DOM; without waiting a tick, start() can fire before Vue has
+			// flushed that DOM update, racing the native call against an element that isn't there yet.
+			await nextTick();
+			await CameraPreview.start(cameraOptions);
+		} catch (err) {
+			console.log('[record] openCamera error:', err);
+			cameraActive.value = false;
+			await showToast(`Could not open camera: ${err?.message || err}`);
+		}
+	})();
+	return openCameraPromise;
 }
 
 async function recordAgain() {
@@ -451,6 +469,10 @@ async function finish(index) {
 }
 
 onIonViewWillEnter(() => {
+	// We're already navigating away (see the isValidAction guard above) — don't open the
+	// camera just to tear it down again when this view unmounts mid-navigation.
+	if (!isValidAction) return;
+
 	openCamera();
 	timer.value = 0;
 	video.value = false;
@@ -473,11 +495,30 @@ onIonViewWillEnter(() => {
 });
 
 onIonViewWillLeave(() => {
-	splide.value.go(0);
-	cameraActive.value = false;
+	// splide never mounts if the camera never opened (invalid action, or openCamera's own
+	// catch block reset cameraActive) — guard against leaving on an unmounted ref.
+	splide.value?.go(0);
 	timer.value = 0;
 	video.value = false;
-	CameraPreview.stop();
+
+	(async () => {
+		// openCamera() is fired-and-forgotten from onIonViewWillEnter, so leaving fast enough
+		// (quick back-navigation, a fast sign-up-then-bail) can call stop() while start() is
+		// still mid-flight. Waiting out any in-flight start before stopping closes that race.
+		if (openCameraPromise) await openCameraPromise.catch(() => {});
+
+		// Must stop the camera BEFORE flipping cameraActive false, not after: cameraActive
+		// gates the v-if wrapping #cameraPreview, the div CameraPreview.start() appended its
+		// <video> element into. Flip it first and Vue tears that DOM down on its own next
+		// reactivity tick; CameraPreview.stop() (the web fallback especially, confirmed via a
+		// scripted repro) does document.getElementById('video') internally, finds nothing,
+		// and silently skips the track.stop() calls that actually release the camera. The DOM
+		// looks clean but the MediaStreamTrack is orphaned — still live, hardware still locked,
+		// indicator still lit — even though the preview is visibly gone. Stopping first lets
+		// the plugin find its element and actually release the hardware before Vue removes it.
+		await CameraPreview.stop().catch(() => {});
+		cameraActive.value = false;
+	})();
 });
 </script>
 
