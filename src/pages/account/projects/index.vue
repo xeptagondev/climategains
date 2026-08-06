@@ -24,7 +24,7 @@ function getIcon(value) {
 </script>
 <template>
 	<!-- eslint-disable vuejs-accessibility/click-events-have-key-events -- keyboard support added via the v-clickable directive, which ESLint's static check can't see -->
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title>
 			<div class="ml-1">My Account</div>
 		</template>
