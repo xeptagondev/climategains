@@ -12,7 +12,11 @@ defineProps({
 		<ion-header class="ion-no-border">
 			<ion-toolbar :class="{ 'toolbar-tall': hideHeader }">
 				<ion-buttons slot="start">
-					<ion-back-button default-href="home" color="white" type="medium"></ion-back-button>
+					<!-- "home" (no leading slash) isn't a route — file-based routing puts the homepage at
+					     "/". A bare relative href resolves against the current path, not the site root,
+					     so whenever there's no in-app history to fall back on (a direct link, a reload,
+					     a deep link) the back button pushed to a path that doesn't match any route. -->
+					<ion-back-button default-href="/" color="white"></ion-back-button>
 				</ion-buttons>
 				<ion-title>
 					<slot name="default-view-title"></slot>

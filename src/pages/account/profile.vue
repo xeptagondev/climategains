@@ -12,7 +12,7 @@ function profile() {
 }
 </script>
 <template>
-	<page-view>
+	<page-view hide-header>
 		<template #default-view-title>
 			<div class="ml-1">My Account</div>
 		</template>
