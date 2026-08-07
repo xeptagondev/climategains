@@ -40,7 +40,7 @@ async function apiSelect(table, filter, query) {
 /**
  * Sign up flow with clean status reporting.
  * Returns one of:
- *   { status: 'created', user }           — brand-new user, confirmation email sent
+ *   { status: 'created', user, session }  — brand-new user; session is set if auto-confirmed
  *   { status: 'pending_confirmation' }    — email is already registered but unconfirmed; Supabase auto-resent
  *   { status: 'already_exists' }          — email is already registered and confirmed; user should log in
  *   { status: 'error', error }            — real error to surface
@@ -73,7 +73,7 @@ async function apiSignUp(payload) {
 			if (Array.isArray(identities) && identities.length === 0) {
 				return { status: 'already_exists' };
 			}
-			return { status: 'created', user: data.user };
+			return { status: 'created', user: data.user, session: data.session ?? null };
 		}
 		// Anti-enumeration shape: { user: null, session: null, error: null }
 		// Supabase has already auto-resent the confirmation email if the account
