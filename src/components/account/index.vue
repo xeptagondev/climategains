@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive } from 'vue';
 import '@splidejs/vue-splide/css';
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 
@@ -44,6 +44,18 @@ function goTo(value) {
 
 const isLoggingIn = ref(false);
 
+async function closeAndContinue() {
+	// Direct DOM query, not a template ref: an open ion-modal is portalled out of this
+	// component's subtree, and store.isAuthenticated flipping can unmount this component
+	// before this runs — Vue nulls refs on unmount, but the portalled DOM node is still
+	// there and still open regardless, so querying the document reaches it either way.
+	document.querySelectorAll('ion-modal').forEach(m => m.dismiss?.());
+
+	modalIsOpen.value = false;
+	router.push(props.callback ? `${props.callback}` : '/account');
+	emit('modal-cancel', true);
+}
+
 async function login() {
 	const email = state.email.trim();
 	const password = state.password;
@@ -66,6 +78,7 @@ async function login() {
 		store.user.account = data.user;
 		store.user.session = data.session;
 		store.isAuthenticated = true;
+		await closeAndContinue();
 	} catch (error: any) {
 		await showError(error.error_description || error.message);
 	} finally {
@@ -73,15 +86,10 @@ async function login() {
 	}
 }
 
-watch(
-	() => store.isAuthenticated,
-	newValue => {
-		if (props.callback) {
-			router.push(`${props.callback}`);
-			emit('modal-cancel', true);
-		}
-	}
-);
+// create.vue emits this when signup already returned a live session (auto-confirmed).
+async function onSignedUp() {
+	await closeAndContinue();
+}
 </script>
 
 <template>
@@ -182,7 +190,7 @@ watch(
 		<ion-content>
 			<div class="create-account-shell px-10">
 				<PageBackground />
-				<createAccount />
+				<createAccount :callback="callback" @signed-up="onSignedUp" />
 			</div>
 		</ion-content>
 	</ion-modal>

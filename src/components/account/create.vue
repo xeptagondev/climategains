@@ -2,6 +2,11 @@
 import { ref, reactive } from 'vue';
 import { alertController } from '@ionic/vue';
 import { apiSignUp } from '@/helpers/api';
+import { useRouter } from 'vue-router';
+
+const props = defineProps(['callback']);
+const emit = defineEmits(['signed-up']);
+const router = useRouter();
 
 const isSubmitting = ref(false);
 const submitted = ref(false);
@@ -68,9 +73,15 @@ async function submit() {
 
 		switch (result?.status) {
 			case 'created':
+				if (result.session) {
+					document.querySelectorAll('ion-modal').forEach(m => m.dismiss?.());
+					router.push(props.callback ? `${props.callback}` : '/account');
+					emit('signed-up');
+				} else {
+					submitted.value = true;
+				}
+				break;
 			case 'pending_confirmation':
-				// New user OR existing-unconfirmed (Supabase auto-resent email).
-				// Either way the user just needs to check their inbox.
 				submitted.value = true;
 				break;
 			case 'already_exists':
