@@ -55,7 +55,7 @@ function formatLocation(loc) {
 			<div v-if="store.role == 'validator'">
 				<div
 					v-if="store.isAuthenticated"
-					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 fixed z-20 right-10 bottom-10 py-2"
+					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 fixed z-20 right-5 bottom-20 py-2 shadow-lg"
 					v-clickable
 					@click="changeRole('activist')">
 					Switch to Activist
@@ -89,7 +89,7 @@ function formatLocation(loc) {
 			<div v-else>
 				<div
 					v-if="store.isAuthenticated"
-					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 fixed z-20 right-10 bottom-10 py-2"
+					class="inline-block bg-gray-900 text-md rounded-full font-bold px-4 fixed z-20 right-5 bottom-20 py-2"
 					v-clickable
 					@click="changeRole('validator')">
 					Switch to Validator

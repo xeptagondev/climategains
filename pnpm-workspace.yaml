@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@capacitor-community/camera-preview@4.0.0': patches/@capacitor-community__camera-preview@4.0.0.patch

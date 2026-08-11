@@ -1,0 +1,20 @@
+diff --git a/android/src/main/java/com/ahm/capacitor/camera/preview/CameraActivity.java b/android/src/main/java/com/ahm/capacitor/camera/preview/CameraActivity.java
+index 8a78b99a59ff44e4aa7133bde0919d94db163249..777ac8f0ce04598fce8d71a77eb6fd9abc24457d 100644
+--- a/android/src/main/java/com/ahm/capacitor/camera/preview/CameraActivity.java
++++ b/android/src/main/java/com/ahm/capacitor/camera/preview/CameraActivity.java	
+@@ -913,7 +913,14 @@ public class CameraActivity extends Fragment {
+                 orientation = (360 - orientation) % 360;
+             }
+         } else {
+-            orientation = (cameraRotationOffset - degrees + 360) % 360;
++            // This used to reuse Preview.java's setDisplayOrientation() formula
++            // ((sensorOrientation - deviceRotation + 360) % 360), which compensates the LIVE
++            // PREVIEW widget's rotation — a different problem from what MediaRecorder's
++            // orientationHint needs, which is just "how much to rotate the raw sensor frame to
++            // read upright", independent of how the preview surface compensates. Reusing the
++            // display formula here is a well-documented, easy mistake (subtracting instead of
++            // adding the device rotation) and produced upside-down rear-camera recordings.
++            orientation = (cameraRotationOffset + degrees) % 360;
+         }
+         Log.w(TAG, "************orientationHint ***********= " + orientation);
+ 

@@ -3,7 +3,7 @@ include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../../node_modules/.pnpm/@capacitor+android@4.8.2_@capacitor+core@4.3.0/node_modules/@capacitor/android/capacitor')
 
 include ':capacitor-community-camera-preview'
-project(':capacitor-community-camera-preview').projectDir = new File('../../node_modules/.pnpm/@capacitor-community+camera-preview@4.0.0/node_modules/@capacitor-community/camera-preview/android')
+project(':capacitor-community-camera-preview').projectDir = new File('../../node_modules/.pnpm/@capacitor-community+camera_2eb6ecdd4122bc5742f8bea854d56df3/node_modules/@capacitor-community/camera-preview/android')
 
 include ':capacitor-app'
 project(':capacitor-app').projectDir = new File('../../node_modules/.pnpm/@capacitor+app@4.0.1_@capacitor+core@4.3.0/node_modules/@capacitor/app/android')
