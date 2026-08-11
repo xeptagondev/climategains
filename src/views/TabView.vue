@@ -76,15 +76,21 @@ export default defineComponent({
 	display: flow-root;
 }
 
-/* Ionic's built-in --color-selected (default theme blue) would otherwise light up whichever
-   tab it thinks is selected; force pure white for that path too, alongside the explicit
-   .tab-is-active class driven by the real current route above. */
+/* Ionic renders --color normally and --color-selected only when ITS OWN .tab-selected class
+   is present (host(.tab-selected) { color: var(--color-selected) } — see tab-button.md.css).
+   That class comes from Ionic's own broken auto-detection (see the comment above), which
+   always lands on the first tab (home) in this app's routing setup — so setting
+   --color-selected unconditionally always highlighted home, regardless of .tab-is-active.
+   Mirroring --color-selected to --color neutralizes Ionic's own selected-state rendering
+   entirely; .tab-is-active (driven by the real route) is then the only thing that can make
+   either path resolve to the highlight color, since --color-selected: var(--color) picks up
+   .tab-is-active's --color override on whichever element actually has it. */
 ion-tab-button {
-	--color-selected: #69b1df;
+	--color-selected: var(--color);
 }
 
 ion-tab-button.tab-is-active {
-	color: #69b1df;
-	--color: #69b1df;
+	color: #ffffff;
+	--color: #ffffff;
 }
 </style>
