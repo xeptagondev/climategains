@@ -162,7 +162,7 @@ const AppPermissions = registerPlugin('AppPermissions');
 const VIDEO_DIR = 'stored-videos';
 
 const cameraOptions = {
-	position: 'front',
+	position: 'rear',
 	height: 400,
 	toBack: true,
 	parent: 'cameraPreview',
@@ -473,6 +473,8 @@ onIonViewWillEnter(() => {
 	// camera just to tear it down again when this view unmounts mid-navigation.
 	if (!isValidAction) return;
 
+	document.body.classList.add('camera-preview-active');
+
 	openCamera();
 	timer.value = 0;
 	video.value = false;
@@ -495,6 +497,8 @@ onIonViewWillEnter(() => {
 });
 
 onIonViewWillLeave(() => {
+	document.body.classList.remove('camera-preview-active');
+
 	// splide never mounts if the camera never opened (invalid action, or openCamera's own
 	// catch block reset cameraActive) — guard against leaving on an unmounted ref.
 	splide.value?.go(0);
@@ -554,9 +558,10 @@ onIonViewWillLeave(() => {
 	opacity: 0;
 	transition: opacity 0.75s ease;
 }
-/* .my-custom-camera-preview-content {
+
+.my-custom-camera-preview-content {
 	--background: transparent;
-} */
+}
 #cameraPreview {
 	width: 100%;
 	height: 400px;
@@ -627,5 +632,12 @@ onIonViewWillLeave(() => {
 ion-icon {
 	font-size: 64px;
 	color: white;
+}
+</style>
+
+<style>
+body.camera-preview-active,
+body.camera-preview-active #app {
+	background: transparent !important;
 }
 </style>
