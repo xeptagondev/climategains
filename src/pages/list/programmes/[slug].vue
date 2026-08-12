@@ -216,6 +216,7 @@ function signup() {
 							</ion-toolbar>
 						</ion-header>
 						<ion-content class="px-6">
+							<PageBackground />
 							<div class="px-6 mt-10">
 								<h1 class="text-3xl text-left mb-0">Welcome To Climate Gains</h1>
 								<p class="text-left text-xl">
